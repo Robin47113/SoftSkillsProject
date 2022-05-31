@@ -1,0 +1,11 @@
+
+ESP-32 (WiFi and Bluetooth) or ESP-8266 (only WiFi)
+Load-Cell with ADC
+Boost-Converter
+BMS with charger
+18650 Lion
+Temperatur sensor
+RGB-Leds
+
+Gyro
+
