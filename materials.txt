@@ -4,8 +4,6 @@ Load-Cell with ADC
 Boost-Converter
 BMS with charger
 18650 Lion
-Temperatur sensor
 RGB-Leds
 
-Gyro
 
