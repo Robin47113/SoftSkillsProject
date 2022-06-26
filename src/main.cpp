@@ -2,7 +2,7 @@
 #include <HX711.h>
 #include <Adafruit_NeoPixel.h> 
 #include <ESP8266WiFi.h>
-#include <PubSubClient.h> 
+//#include <PubSubClient.h> 
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WifiManager.h>
@@ -18,27 +18,23 @@ HX711 scale1;
 #define LOADCELL2_SCK_PIN  D3
 int Loadcell2Tare;
 HX711 scale2;
-
+//leds
 #define LED_PIN D5
 #define LED_COUNT 15
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 
 //mqtt settings
-IPAddress server(192, 168, 178, 75);//mqtt broker ip
-const int mqtt_port = 1883;
-const char* mqtt_user = "mqtt";
-const char* mqtt_pw = "test123";
+//IPAddress server(192, 168, 178, 75);//mqtt broker ip
+//const int mqtt_port = 1883;
+//const char* mqtt_user = "mqtt";
+//const char* mqtt_pw = "test123";
 
-WiFiClient espClient;
-PubSubClient client(espClient);//mqtt client
-
-
+//WiFiClient espClient;
+//PubSubClient client(espClient);//mqtt client
 
 
-
-
-//mqtt callback
+/*//mqtt callback
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -48,7 +44,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 }
-
+//mqtt reconnecting
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -68,7 +64,7 @@ void reconnect() {
       delay(5000);
     }
   }
-}
+}*/
 
 
 void tare(){
@@ -113,9 +109,9 @@ void setup() {
   //Wifimanager Initialization
   WiFiManager wifiManager;
   wifiManager.autoConnect("AutoConnectAP");
-  //mqtt Initialization
+  /*//mqtt Initialization
   client.setServer(server, mqtt_port);
-  client.setCallback(callback);
+  client.setCallback(callback);*/
 
   Serial.println("Initializing LED Strip");
   strip.begin(); 
@@ -127,24 +123,18 @@ void setup() {
 }
 
 void loop() {
+
+  /*//mqtt reconnecting 
    if (!client.connected()) {
     reconnect();
   }
-  client.loop();
+  client.loop();*/
+
   //getWeight();
   //delay(1000);
+
  /*   for(int i=0;i<strip.numPixels();i++){
    strip.setPixelColor(i, strip.Color(0, 255, 0));
-    strip.show();
-    delay(100);
-  }
-      for(int i=0;i<strip.numPixels();i++){
-   strip.setPixelColor(i, strip.Color(0, 0, 255));
-    strip.show();
-    delay(100);
-  }
-      for(int i=0;i<strip.numPixels();i++){
-   strip.setPixelColor(i, strip.Color(255, 0, 0));
     strip.show();
     delay(100);
   }*/
