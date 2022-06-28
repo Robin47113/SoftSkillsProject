@@ -2,10 +2,15 @@
 #include <HX711.h>
 #include <Adafruit_NeoPixel.h> 
 #include <ESP8266WiFi.h>
-//#include <PubSubClient.h> 
+#include <PubSubClient.h> 
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WifiManager.h>
+//for time
+#include <WiFiUdp.h>
+#include <NTPClient.h>
+//spiffs
+#include <FS.h>
 
 // HX711-1 (1 load cell)
 #define LOADCELL1_DOUT_PIN D2
@@ -25,16 +30,21 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KH
 
 
 //mqtt settings
-//IPAddress server(192, 168, 178, 75);//mqtt broker ip
-//const int mqtt_port = 1883;
-//const char* mqtt_user = "mqtt";
-//const char* mqtt_pw = "test123";
+IPAddress server(192, 168, 178, 75);//mqtt broker ip
+const int mqtt_port = 1883;
+const char* mqtt_user = "mqtt";
+const char* mqtt_pw = "test123";
 
-//WiFiClient espClient;
-//PubSubClient client(espClient);//mqtt client
+WiFiClient espClient;
+PubSubClient client(espClient);//mqtt client
+//for time
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 
 
-/*//mqtt callback
+
+
+//mqtt callback
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -64,14 +74,14 @@ void reconnect() {
       delay(5000);
     }
   }
-}*/
+}
 
 
 void tare(){
   Loadcell1Tare = scale1.read_average(10);
   Loadcell2Tare = scale2.read_average(10);
 }
-
+//returns weight in gramms
 int getWeight(){
   if (scale1.is_ready()) {
     long reading = scale1.read_average(10)-Loadcell1Tare;
@@ -92,6 +102,51 @@ int getWeight(){
 Serial.println();
 return 1;
 }
+//saves amount(g) to saved.txt with timestamp
+void drank (int amount){
+if (SPIFFS.exists("/saved.txt")) {
+ File f = SPIFFS.open("/saved.txt", "r");
+      if (!f) {
+        Serial.print("Unable To Open '");
+        Serial.print("/saved.txt");
+        Serial.println("' for Reading");
+        Serial.println();
+      } else {
+        String s;
+        Serial.print("Contents of file '");
+        Serial.print("/saved.txt");
+        Serial.println("'");
+        Serial.println();
+        while (f.position()<f.size())
+        {
+          s=f.readStringUntil('\n');
+          s.trim();
+          Serial.println(s);
+        } 
+        f.close();
+    }
+  } else {
+      Serial.print("Unable To Find ");
+      Serial.println("/saved.txt");
+      Serial.println();
+  }
+}
+//amount drank that day
+int drankday(){
+  return 0;
+}
+
+int drankLastDate(){
+  return 0;
+} 
+
+int drankLastAmount(){
+  return 0;
+}
+
+
+
+
 
 void setup() {
   Serial.begin(115200);
@@ -120,6 +175,16 @@ void setup() {
     strip.show();
   }
    Serial.println("LED strip Initialized");
+   //timeclient init
+   timeClient.begin();
+
+// Startint spiffs
+  if (SPIFFS.begin()) {
+      Serial.println("SPIFFS Active");
+      Serial.println();
+  } else {
+      Serial.println("Unable to activate SPIFFS");
+  }
 }
 
 void loop() {
@@ -128,16 +193,33 @@ void loop() {
    if (!client.connected()) {
     reconnect();
   }
+  //mqtt loop
   client.loop();*/
 
-  //getWeight();
-  //delay(1000);
 
- /*   for(int i=0;i<strip.numPixels();i++){
-   strip.setPixelColor(i, strip.Color(0, 255, 0));
-    strip.show();
-    delay(100);
-  }*/
+timeClient.update();
+Serial.println(timeClient.getFormattedTime());
+
+getWeight();
+
+delay(1000);
+
+//led test
+for(int i=0;i<strip.numPixels();i++){
+  strip.setPixelColor(i, strip.Color(0, 255, 0));
+  strip.show();
+  delay(100);
+}
+for(int i=0;i<strip.numPixels();i++){
+  strip.setPixelColor(i, strip.Color(0, 0, 255));
+  strip.show();
+  delay(100);
+}
+for(int i=0;i<strip.numPixels();i++){
+  strip.setPixelColor(i, strip.Color(255, 0, 0));
+  strip.show();
+  delay(100);
+}
   
 }
 
