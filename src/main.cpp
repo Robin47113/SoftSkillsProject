@@ -7,16 +7,17 @@
 #include <ESP8266WebServer.h>
 #include <WifiManager.h>
 
-// HX711-1 (1 load cell)
+/*// HX711-1 (1 load cell)
 #define LOADCELL1_DOUT_PIN D2
 #define LOADCELL1_SCK_PIN  D1
 int Loadcell1Tare;
-HX711 scale1;
+HX711 scale1;*/
 
-// HX711-2 2 load cells
+// HX711-2 2 load cells 590g   -13434
 #define LOADCELL2_DOUT_PIN D4
 #define LOADCELL2_SCK_PIN  D3
-int Loadcell2Tare;
+int Loadcell2Tare=-262267;
+float Loadcell2cal=-21.76949f;
 HX711 scale2;
 //leds
 #define LED_PIN D5
@@ -66,45 +67,39 @@ void reconnect() {
   }
 }*/
 
-
-void tare(){
-  Loadcell1Tare = scale1.read_average(10);
-  Loadcell2Tare = scale2.read_average(10);
+//returns max weight of water
+int maxWeight(){
+  return 1;
+}
+//returns amount of last drink
+int lastDrankAmount(){
+  return 1;
+}
+//returns date of last drink
+int lastDrankDate(){
+  return 1;
 }
 
-int getWeight(){
-  if (scale1.is_ready()) {
-    long reading = scale1.read_average(10)-Loadcell1Tare;
-    Serial.print("HX711-1 reading: ");
-    Serial.println(reading);
-  } else {
-    Serial.println("HX711-1 not found.");
-  }
+//returns amount drank for last week
+int drankDay(int day){
+  return 1;
+}
 
-
-  if (scale2.is_ready()) {
-    long reading = scale2.read_average(10)-Loadcell2Tare;
-    Serial.print("HX711-2 reading: ");
-    Serial.println(reading);
-  } else {
-    Serial.println("HX711-2 not found.");
-  }
-Serial.println();
-return 1;
+//returns Water left in gramms
+float getWeight(){
+return (scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal;
 }
 
 void setup() {
   Serial.begin(115200);
 
-  Serial.println("Initializing the scale1");
+  /*Serial.println("Initializing the scale1");
   scale1.begin(LOADCELL1_DOUT_PIN, LOADCELL1_SCK_PIN);
-  Serial.println("Scale1 Initialized");
+  Serial.println("Scale1 Initialized");*/
   	
   Serial.println("Initializing the scale2");
   scale2.begin(LOADCELL2_DOUT_PIN, LOADCELL2_SCK_PIN);
   Serial.println("Scale2 Initialized");
-
-  tare();
 
   //Wifimanager Initialization
   WiFiManager wifiManager;
@@ -120,20 +115,53 @@ void setup() {
     strip.show();
   }
    Serial.println("LED strip Initialized");
+
+
+
+//Load cell calibration
+/*
+  if (scale2.is_ready()) {
+    scale2.set_scale();    
+    Serial.println("Tare... remove any weights from the scale.");
+    Serial.println(scale2.read_average(5));
+    delay(5000);
+    //scale2.tare();
+    //scale2.set_offset(scale2.read_average(5));
+    Loadcell2Tare = scale2.read_average(10);
+    Serial.println("Tare done...");
+    Serial.println(scale2.read_average(10)-Loadcell2Tare);
+    Serial.print("Place a known weight on the scale...");
+    delay(4000);
+    //scale2.set_scale(590);
+    //Loadcell2cal = scale2.get_units(10)/590;
+    Serial.print("Resultcal: ");
+    Serial.println(scale2.get_units(10)/590);
+    long reading = (scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal;
+    Serial.print("Result: ");
+    Serial.println(reading);
+  } 
+  else {
+    Serial.println("HX711 not found.");
+  }*/
+
 }
 
 void loop() {
-
+  //mqtt loop
   /*//mqtt reconnecting 
    if (!client.connected()) {
     reconnect();
   }
   client.loop();*/
 
-  //getWeight();
-  //delay(1000);
 
- /*   for(int i=0;i<strip.numPixels();i++){
+  Serial.print("Result: ");
+  Serial.println(getWeight());
+  delay(1000);
+
+
+  //Led test
+  /*for(int i=0;i<strip.numPixels();i++){
    strip.setPixelColor(i, strip.Color(0, 255, 0));
     strip.show();
     delay(100);
