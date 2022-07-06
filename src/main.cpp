@@ -1,11 +1,15 @@
 #include <Arduino.h>
-#include <HX711.h>
-#include <Adafruit_NeoPixel.h> 
+#include <HX711.h>//load cells
+#include <Adafruit_NeoPixel.h> //leds
 #include <ESP8266WiFi.h>
 //#include <PubSubClient.h> 
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WifiManager.h>
+#include <FS.h>//spiffs
+#include <NTPClient.h>//ntp (time)
+#include <WiFiUdp.h>
+#include <ESP8266HTTPClient.h>
 
 /*// HX711-1 (1 load cell)
 #define LOADCELL1_DOUT_PIN D2
@@ -16,14 +20,17 @@ HX711 scale1;*/
 // HX711-2 2 load cells 590g   -13434
 #define LOADCELL2_DOUT_PIN D4
 #define LOADCELL2_SCK_PIN  D3
-int Loadcell2Tare=-262267;
-float Loadcell2cal=-21.76949f;
+int Loadcell2Tare=-266617;
+float Loadcell2cal=-22.76949f;
 HX711 scale2;
 //leds
 #define LED_PIN D5
 #define LED_COUNT 15
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
+//spiffs src\data\saves
+#define TESTFILE "/saves.txt"
+bool    spiffsActive = false;
 
 //mqtt settings
 //IPAddress server(192, 168, 178, 75);//mqtt broker ip
@@ -34,6 +41,14 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, NEO_GRB + NEO_KH
 //WiFiClient espClient;
 //PubSubClient client(espClient);//mqtt client
 
+//ntp
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+//discord webhook
+const char* discord = "https://discord.com/api/webhooks/994272805384364072/VKC_5xUUDNtgnyNbaPNp74NiCHGJCPrqfRUdv49O01gCe2J578KxZkMJc95LLNXHJg6W";
+const boolean discord_tts = false;
+WiFiClientSecure client;
+HTTPClient https;
 
 /*//mqtt callback
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -73,6 +88,36 @@ int maxWeight(){
 }
 //returns amount of last drink
 int lastDrankAmount(){
+    if (spiffsActive) {
+    if (SPIFFS.exists(TESTFILE)) {
+      File f = SPIFFS.open(TESTFILE, "r");
+      if (!f) {
+        Serial.print("Unable To Open '");
+        Serial.print(TESTFILE);
+        Serial.println("' for Reading");
+        Serial.println();
+      } else {
+        String s;
+        Serial.print("Contents of file '");
+        Serial.print(TESTFILE);
+        Serial.println("'");
+        Serial.println();
+        while (f.position()<f.size())
+        {
+          s=f.readStringUntil('\n');
+          s.trim();
+          Serial.println(s);
+        } 
+        f.close();
+      }
+      Serial.println();
+     } else {
+      Serial.print("Unable To Find ");
+      Serial.println(TESTFILE);
+      Serial.println();
+    }
+  }
+
   return 1;
 }
 //returns date of last drink
@@ -86,13 +131,35 @@ int drankDay(int day){
 }
 
 //returns Water left in gramms
-float getWeight(){
+int getWeight(){
 return (scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal;
 }
+//saves amount drank
+void drank(int amount){
+  
+}
+
+// Sets up POST request to discord webhook.
+void discord_send(String content) {
+  https.begin(client, discord);
+      https.addHeader("Content-Type", "application/json");
+
+      int httpsCode = https.POST("{\"content\":\"" + content + "\",\"tts\":" + discord_tts + "}");
+
+      // if the code returned is -1 there has been an error, that's why it checks on -1.
+      if(httpsCode > -1){
+        Serial.println("Message send succesfull");
+      }else{
+        Serial.println("Error sending message");
+      }
+      https.end();
+
+}
+
 
 void setup() {
   Serial.begin(115200);
-
+  delay(500);
   /*Serial.println("Initializing the scale1");
   scale1.begin(LOADCELL1_DOUT_PIN, LOADCELL1_SCK_PIN);
   Serial.println("Scale1 Initialized");*/
@@ -116,9 +183,26 @@ void setup() {
   }
    Serial.println("LED strip Initialized");
 
+  timeClient.begin();
+  Serial.println("NTP client Initialized");
+  timeClient.setTimeOffset(7200);
 
+ // Start filing subsystem
+  if (SPIFFS.begin()) {
+      Serial.println("SPIFFS Active");
+      Serial.println();
+      spiffsActive = true;
+  } else {
+      Serial.println("Unable to activate SPIFFS");
+  }
+
+
+//discord message
+ client.setInsecure();
+  
 
 //Load cell calibration
+Serial.println(scale2.read_average(5));
 /*
   if (scale2.is_ready()) {
     scale2.set_scale();    
@@ -155,11 +239,22 @@ void loop() {
   client.loop();*/
 
 
+      
+     
+  //discord_send("test");
+
   Serial.print("Result: ");
   Serial.println(getWeight());
   delay(1000);
 
 
+  timeClient.update();
+  Serial.print(timeClient.getHours());
+  Serial.print(":");
+  Serial.print(timeClient.getMinutes());
+  Serial.print(":");
+  Serial.println(+timeClient.getSeconds());
+  Serial.println(timeClient.getEpochTime()/86400);//current day from 1.Jan 1970
   //Led test
   /*for(int i=0;i<strip.numPixels();i++){
    strip.setPixelColor(i, strip.Color(0, 255, 0));
