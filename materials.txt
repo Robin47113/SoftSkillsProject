@@ -4,6 +4,6 @@ Load-Cell with ADC
 Boost-Converter
 BMS with charger
 18650 Lion
-RGB-Leds
+RGB-Leds (WS2812B)
 
 
