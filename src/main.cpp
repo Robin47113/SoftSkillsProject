@@ -39,6 +39,7 @@ int timeMillis; //timestamp (in millis since chip was turned on) of the last wei
 #define WEIGHT_TAKING_DELAY_FILLING 500//after this time (in milliseconds) the weight is measured again during filling.
 int fillingMode = 0;//0=normal functionality, 1=checking for Time Threshold, 2=waiting for filling to stop
 //-------weight
+#define PEDESTAL_WEIGHT_EMPTY 0
 #define BOTTLE_WEIGHT_EMPTY 0
 #define BOTTLE_WEIGHT_MAX 100
 #define FILLING_THRESHOLD_WEIGHT 100//weight that has to be added for the bottle to accept it as being filled.
@@ -55,7 +56,7 @@ int weightPrev = 0;
 int consumptionWeek[7] = {0,0,0,0,0,0,0};//rightmost is the current day, left is 6 days ago
 int lastSessionWeight = 0;
 int lastSessionTimestamp[3] = {0,0,0}; //hour:minute:seconds
-int currentDay;
+int currentDay;//for newDay() / days from 1.Jan 1970
 
 
 
@@ -125,8 +126,6 @@ int lastDrankAmount(){
 int lastDrankDate(int i){
   return lastSessionTimestamp[i];
 }
-
-
 //returns amount drank for last week
 int drankDay(int day){
   return consumptionWeek[day];
@@ -134,7 +133,23 @@ int drankDay(int day){
 
 //returns Water left in gramms
 int getWeight(){
+setLed();
 return (scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal-BOTTLE_WEIGHT_EMPTY;
+}
+
+//sets Led
+void setLed(){
+    /*for(int i=0;i<strip.numPixels();i++){
+   strip.setPixelColor(i, strip.Color(0, 255, 0));
+    strip.show();
+    delay(100);
+  }*/
+  float fillp = ((scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal-BOTTLE_WEIGHT_EMPTY)/BOTTLE_WEIGHT_MAX;
+  for(int i=0;i<fillp*LED_COUNT;i++){
+    strip.setPixelColor(i, strip.Color(0, 255, 0));
+    strip.show();
+  }
+
 }
 // Sets up POST request to discord webhook.
 void discord_send(String content) {
@@ -152,7 +167,7 @@ void discord_send(String content) {
       https.end();
 }
 
-//saves amount(g) to saved.txt with timestamp
+//saves amount(g) to saved.txt with timestamp and updates variables
 void drank (int amount){
 if (SPIFFS.exists(TESTFILE)) {
  File f = SPIFFS.open(TESTFILE, "w+");
@@ -200,6 +215,7 @@ if (SPIFFS.exists(TESTFILE)) {
   
 }
 
+//updates variables and saved data for new day
 void newDay(){
 if (SPIFFS.exists(TESTFILE)) {
  File f = SPIFFS.open(TESTFILE, "w+");
@@ -231,6 +247,7 @@ if (SPIFFS.exists(TESTFILE)) {
   
 }
 
+//prints data from saved.txt
 void printData(){
    if (spiffsActive) {
     if (SPIFFS.exists(TESTFILE)) {
@@ -276,6 +293,7 @@ void printData(){
   Serial.println();
 }
 
+//loads data from saved.txt to variables
 void loadData(){
     if (spiffsActive) {
     if (SPIFFS.exists(TESTFILE)) {
@@ -339,6 +357,54 @@ void loadData(){
   
 }
 
+void checkWeight(){
+  timeClient.update();
+  if(timeClient.getEpochTime()/86400 != currentDay){
+    newDay();
+  }
+ //weight checking
+  if (fillingMode == 1) {
+    if (millis() > timeMillis + FILLING_THRESHOLD_TIME) {
+      timeMillis = millis();
+      weight = getWeight();
+      if (weight - weightPrev > FILLING_THRESHOLD_WEIGHT) {
+        fillingMode = 2;
+      } else {
+        fillingMode = 0;
+      }
+    }
+  } else {
+    if (fillingMode == 2) {
+      if (millis() > timeMillis + WEIGHT_TAKING_DELAY_FILLING) {
+        timeMillis = millis();
+        weight = getWeight();
+        if (weight - weightPrev < LOADCELL_ERROR_MARGIN) {
+          fillingMode = 0;
+        }
+      }
+    } else {
+      timeMillis = millis();
+      if (millis() > timeMillis + WEIGHT_TAKING_DELAY){ //checks whether the weight has to be measured again.
+        weight = getWeight();
+        if (getWeight() > PEDESTAL_WEIGHT_EMPTY + LOADCELL_ERROR_MARGIN) {
+          weightPrev = weight;
+          int deltaWeight = weight - weightPrev;
+          if (abs(deltaWeight) > LOADCELL_ERROR_MARGIN) {
+            if (deltaWeight > FILLING_THRESHOLD_WEIGHT) {
+              fillingMode = 1;
+            } else {
+              lastSessionWeight = 0 - deltaWeight;//drink(amount) method
+              //TODO change timestamp; Also needs to check whether it's a new day and then shift the data array left
+              consumptionWeek[7] = consumptionWeek[7] + lastSessionWeight;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
 void setup() {
   Serial.begin(115200);
   delay(500);
@@ -378,17 +444,15 @@ void setup() {
       Serial.println("Unable to activate SPIFFS");
   }
 
-  
+  //discord message
+  client.setInsecure();
+  //current day for newDay
+  timeClient.update();
+  currentDay = timeClient.getEpochTime()/86400;
 
-//discord message
-client.setInsecure();
-//current day for newDay
-timeClient.update();
-currentDay = timeClient.getEpochTime()/86400;
-
-//Load cell calibration
-Serial.println(scale2.read_average(5));
-/*
+  //Load cell calibration
+  Serial.println(scale2.read_average(5));
+  /*
   if (scale2.is_ready()) {
     scale2.set_scale();    
     Serial.println("Tare... remove any weights from the scale.");
@@ -413,10 +477,10 @@ Serial.println(scale2.read_average(5));
     Serial.println("HX711 not found.");
   }
   */
- loadData();
- printData();
- drank(500);
- drank(500);
+  loadData();
+  printData();
+
+  timeMillis = millis();
 }
 
 void loop() {
@@ -428,23 +492,15 @@ void loop() {
   //mqtt loop
   client.loop();*/
 
-  delay(1000);
+  //Serial.print("Result: ");
+  //Serial.println(getWeight());
+  //delay(1000);
   
-  //discord_send("test");
 
-  Serial.print("Result: ");
-  Serial.println(getWeight());
-  
-  timeClient.update();
-  if(timeClient.getEpochTime()/86400 != currentDay){
-    newDay();
-  }
-  //Led test
-  /*for(int i=0;i<strip.numPixels();i++){
-   strip.setPixelColor(i, strip.Color(0, 255, 0));
-    strip.show();
-    delay(100);
-  }*/
+
+  checkWeight();
+
+  //setLed();
   
 }
 
