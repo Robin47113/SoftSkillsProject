@@ -2,14 +2,14 @@
 #include <HX711.h>//loadcells
 #include <Adafruit_NeoPixel.h>//leds
 #include <ESP8266WiFi.h>
-#include <PubSubClient.h> 
+#include <PubSubClient.h>//mqtt
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WifiManager.h>
 #include <FS.h>//spiffs
 #include <NTPClient.h>//ntp (time)
-#include <WiFiUdp.h>
-#include <ESP8266HTTPClient.h>
+#include <WiFiUdp.h>//ntp
+#include <ESP8266HTTPClient.h>//discord messaging
 
 /*// HX711-1 (1 load cell)
 #define LOADCELL1_DOUT_PIN D2
@@ -41,7 +41,7 @@ int fillingMode = 0;//0=normal functionality, 1=checking for Time Threshold, 2=w
 //-------weight
 #define PEDESTAL_WEIGHT_EMPTY 0
 #define BOTTLE_WEIGHT_EMPTY 0
-#define BOTTLE_WEIGHT_MAX 100
+#define BOTTLE_WEIGHT_MAX 1000
 #define FILLING_THRESHOLD_WEIGHT 100//weight that has to be added for the bottle to accept it as being filled.
 #define FILLING_THRESHOLD_TIME 100//time that the additional weight has to be measured for to accept it as being filled.
 
@@ -133,23 +133,51 @@ int drankDay(int day){
 
 //returns Water left in gramms
 int getWeight(){
-setLed();
 return (scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal-BOTTLE_WEIGHT_EMPTY;
 }
 
 //sets Led
-void setLed(){
-    /*for(int i=0;i<strip.numPixels();i++){
-   strip.setPixelColor(i, strip.Color(0, 255, 0));
-    strip.show();
-    delay(100);
-  }*/
-  float fillp = ((scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal-BOTTLE_WEIGHT_EMPTY)/BOTTLE_WEIGHT_MAX;
-  for(int i=0;i<fillp*LED_COUNT;i++){
-    strip.setPixelColor(i, strip.Color(0, 255, 0));
-    strip.show();
+void setLed(int mode){
+  if(mode==0){
+    for(int i=0;i<strip.numPixels();i++){
+      strip.setPixelColor(i, strip.Color(255, 0, 0));
+      strip.show();
+      delay(100);
+    }
+    for(int i=0;i<strip.numPixels();i++){
+      strip.setPixelColor(i, strip.Color(0, 255, 0));
+      strip.show();
+      delay(100);
+    }
+    for(int i=0;i<strip.numPixels();i++){
+      strip.setPixelColor(i, strip.Color(0, 0, 255));
+      strip.show();
+      delay(100);
   }
+}
+  if(mode==1){
+  for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 256) {
+    for(int i=0; i<strip.numPixels(); i++) { 
+      int pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
+      strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+    }
+    strip.show();
+    delay(10);
+  }
+}
 
+  if(mode==2){
+  float fillp = getWeight()/BOTTLE_WEIGHT_MAX;
+  fillp  = fillp*LED_COUNT;
+  for(int i=0;i<floorf(fillp);i++){
+    strip.setPixelColor(i, strip.Color(0,255 , 255));
+    if(i+1==floorf(fillp)){
+      strip.setPixelColor(i+1,strip.Color(0,0,255*(fillp-floorf(fillp))));
+    }
+    strip.show();
+
+  }
+  }
 }
 // Sets up POST request to discord webhook.
 void discord_send(String content) {
@@ -492,15 +520,15 @@ void loop() {
   //mqtt loop
   client.loop();*/
 
-  //Serial.print("Result: ");
-  //Serial.println(getWeight());
+  Serial.print("Result: ");
+  Serial.println(getWeight());
   //delay(1000);
   
 
 
-  checkWeight();
+  //checkWeight();
 
-  //setLed();
+  setLed(1);
   
 }
 
