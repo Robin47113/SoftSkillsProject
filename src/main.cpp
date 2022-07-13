@@ -146,27 +146,27 @@ int maxWeight() {
 
 //returns amount of last drink
 int lastDrankAmount() {
-  return lastSessionWeight;
+    return lastSessionWeight;
 }
 
 //returns date of last drink
 int lastDrankDate(int i) {
-  return lastSessionTimestamp[i];
+    return lastSessionTimestamp[i];
 }
 
 //returns amount drank for last week
 int drankDay(int day) {
-  return consumptionWeek[day];
+    return consumptionWeek[day];
 }
 
 //returns Water left in gramms
 int getWeight() {
-  return (scale2.get_units(10) - Loadcell2Tare) / Loadcell2cal - BOTTLE_WEIGHT_EMPTY;
+    return (scale2.get_units(10) - Loadcell2Tare) / Loadcell2cal - BOTTLE_WEIGHT_EMPTY;
 }
 
 //sets Led
-void setLed(int mode){
-    if (mode == 0){
+void setLed(int mode) {
+    if (mode == 0) {
         for(int i = 0; i < strip.numPixels(); i++){
             strip.setPixelColor(i, strip.Color(255, 0, 0));
             strip.show();
@@ -188,7 +188,7 @@ void setLed(int mode){
     
     if(mode == 1) {
         for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 256) {
-            for(int i=0; i<strip.numPixels(); i++) { 
+            for(int i = 0; i < strip.numPixels(); i++) { 
                 int pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
                 strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
             }
@@ -198,12 +198,12 @@ void setLed(int mode){
     }
 
     if (mode == 2) {
-        float fillp = getWeight()/BOTTLE_WEIGHT_MAX;
+        float fillp = getWeight() / BOTTLE_WEIGHT_MAX;
         fillp = fillp * LED_COUNT;
-        for(int i=0;i<floorf(fillp);i++){
+        for(int i = 0; i < floorf(fillp); i++){
             strip.setPixelColor(i, strip.Color(0,255 , 255));
-            if(i+1==floorf(fillp)){
-                strip.setPixelColor(i+1,strip.Color(0,0,255*(fillp-floorf(fillp))));
+            if(i + 1 == floorf(fillp)) {
+                strip.setPixelColor(i + 1, strip.Color(0, 0, 255 * (fillp - floorf(fillp))));
             }
             strip.show();
         }
@@ -218,16 +218,16 @@ void discord_send(String content) {
     int httpsCode = https.POST("{\"content\":\"" + content + "\",\"tts\":" + discord_tts + "}");
 
     // if the code returned is -1 there has been an error, that's why it checks on -1.
-    if(httpsCode > -1){
+    if (httpsCode > -1) {
         Serial.println("Message send succesfull");
-    }else{
+    } else {
         Serial.println("Error sending message");
     }
     https.end();
 }
 
 //saves amount(g) to saved.txt with timestamp and updates variables
-void drank (int amount){
+void drank (int amount) {
     if (SPIFFS.exists(TESTFILE)) {
         File f = SPIFFS.open(TESTFILE, "w+");
         if (!f) {
@@ -238,30 +238,30 @@ void drank (int amount){
         } else {
             String i;
             timeClient.update();
-            if(timeClient.getHours()<10){
+            if(timeClient.getHours() < 10) {
                 i += "0" + (String)timeClient.getHours();
-            }else{
+            } else {
                 i += (String)timeClient.getHours();
             }
-            lastSessionTimestamp[0]=timeClient.getHours();
-            if(timeClient.getMinutes()<10){
-                i +=  "0" + (String)timeClient.getMinutes();
-            }else{
+            lastSessionTimestamp[0] = timeClient.getHours();
+            if (timeClient.getMinutes() < 10) {
+                i += "0" + (String)timeClient.getMinutes();
+            } else {
                 i += (String)timeClient.getMinutes();
             }
-            lastSessionTimestamp[1]=timeClient.getMinutes();
-            if(timeClient.getSeconds()<10){
+            lastSessionTimestamp[1] = timeClient.getMinutes();
+            if (timeClient.getSeconds() < 10){
                 i += "0" + (String)timeClient.getSeconds();
-            }else{
+            } else {
                 i += (String)timeClient.getSeconds();
             }
-            lastSessionTimestamp[2]=timeClient.getSeconds();
+            lastSessionTimestamp[2] = timeClient.getSeconds();
             f.println(i);
             f.println(amount);
-            f.println(drankDay(0)+amount);
+            f.println(drankDay(0) + amount);
             lastSessionWeight = amount;
-            consumptionWeek[0]+=amount;
-            for(int i = 1;i<7;i++){
+            consumptionWeek[0] += amount;
+            for(int i = 1; i < 7; i++){
                 f.println(drankDay(i));
             }
             f.close();
@@ -274,7 +274,7 @@ void drank (int amount){
 }
 
 //updates variables and saved data for new day
-void newDay(){
+void newDay() {
     if (SPIFFS.exists(TESTFILE)) {
         File f = SPIFFS.open(TESTFILE, "w+");
         if (!f) {
@@ -283,17 +283,18 @@ void newDay(){
             Serial.println("' for Reading");
             Serial.println();
         } else {
-            String h = (String)lastSessionTimestamp[0]+(String)lastSessionTimestamp[1]+(String)lastSessionTimestamp[2];
+            String h = (String)lastSessionTimestamp[0] + (String)lastSessionTimestamp[1] + (String)lastSessionTimestamp[2];
             f.println(h);
             f.println(lastSessionWeight);
             f.println(0);
-            int tempArr[7] = {0,0,0,0,0,0,0};
-            for(int i = 1;i<7;i++){
-                f.println(drankDay(i-1));
-                tempArr[i] = drankDay(i-1);
+            int tempArr[7] = {0, 0, 0, 0, 0, 0, 0};
+            for(int i = 1; i < 7; i++) {
+                f.println(drankDay(i - 1));
+                tempArr[i] = drankDay(i - 1);
             }
-            for(int i = 0;i<7;i++){
-                consumptionWeek[i]=tempArr[i];
+
+            for(int i = 0; i < 7; i++){
+                consumptionWeek[i] = tempArr[i];
             }
             f.close();
         }
@@ -320,8 +321,9 @@ void printData(){
                 Serial.print(TESTFILE);
                 Serial.println("'");
                 Serial.println();
-                while (f.position()<f.size()) {
-                    s=f.readStringUntil('\n');
+
+                while (f.position() < f.size()) {
+                    s = f.readStringUntil('\n');
                     s.trim();
                     Serial.println(s);
                 }
@@ -342,7 +344,7 @@ void printData(){
     Serial.print("Last: ");
     Serial.println(lastSessionWeight);
     Serial.print("Week: ");
-    for(int i = 0;i<7;i++){
+    for(int i = 0; i < 7; i++){
         Serial.print(consumptionWeek[i]);
         Serial.print(" : ");
     }
@@ -350,114 +352,111 @@ void printData(){
 }
 
 //loads data from saved.txt to variables
-void loadData(){
+void loadData() {
     if (spiffsActive) {
-    if (SPIFFS.exists(TESTFILE)) {
-      File f = SPIFFS.open(TESTFILE, "r");
-      if (!f) {
-        Serial.print("Unable To Open '");
-        Serial.print(TESTFILE);
-        Serial.println("' for Reading");
-        Serial.println();
-      } else {
-        String s;
-        Serial.print("Contents of file '");
-        Serial.print(TESTFILE);
-        Serial.println("'");
-        Serial.println();
-        while (f.position()<f.size())
-        {
-          s=f.readStringUntil('\n');
-          s.trim();
-          Serial.println(s);
-            lastSessionTimestamp[0] = s.substring(0,2).toInt();
-            Serial.print("Hours :");
-            Serial.println(lastSessionTimestamp[0]);
-            lastSessionTimestamp[1]=s.substring(2,4).toInt();
-            Serial.print("Minutes :");
-            Serial.println(lastSessionTimestamp[1]);
-            lastSessionTimestamp[2]=s.substring(4,6).toInt();
-            Serial.print("Seconds :");
-            Serial.println(lastSessionTimestamp[2]); 
+        if (SPIFFS.exists(TESTFILE)) {
+            File f = SPIFFS.open(TESTFILE, "r");
+            if (!f) {
+                Serial.print("Unable To Open '");
+                Serial.print(TESTFILE);
+                Serial.println("' for Reading");
+                Serial.println();
+            } else {
+                String s;
+                Serial.print("Contents of file '");
+                Serial.print(TESTFILE);
+                Serial.println("'");
+                Serial.println();
+                while (f.position() < f.size()) {
+                    s = f.readStringUntil('\n');
+                    s.trim();
+                    Serial.println(s);
+                    lastSessionTimestamp[0] = s.substring(0,2).toInt();
+                    Serial.print("Hours :");
+                    Serial.println(lastSessionTimestamp[0]);
+                    lastSessionTimestamp[1] = s.substring(2,4).toInt();
+                    Serial.print("Minutes :");
+                    Serial.println(lastSessionTimestamp[1]);
+                    lastSessionTimestamp[2] = s.substring(4,6).toInt();
+                    Serial.print("Seconds :");
+                    Serial.println(lastSessionTimestamp[2]); 
 
-          s=f.readStringUntil('\n');
-          s.trim();
-          Serial.println(s);
+                    s = f.readStringUntil('\n');
+                    s.trim();
+                    Serial.println(s);
 
-            Serial.print("Last drank :");
-            lastSessionWeight=s.toInt();
-            Serial.println(s.toInt());
+                    Serial.print("Last drank :");
+                    lastSessionWeight = s.toInt();
+                    Serial.println(s.toInt());
 
-          for(int i = 0;i<7;i++){
-            s=f.readStringUntil('\n');
-            s.trim();
-            
+                    for(int i = 0; i < 7; i++) {
+                        s = f.readStringUntil('\n');
+                        s.trim();
 
-            Serial.print("Drank day ");
-            Serial.print(i);
-            Serial.print(": ");
-            Serial.println(s);
-            consumptionWeek[i]=s.toInt();
-          }
+                        Serial.print("Drank day ");
+                        Serial.print(i);
+                        Serial.print(": ");
+                        Serial.println(s);
+                        consumptionWeek[i] = s.toInt();
+                    }
+                }
+                f.close();
+            }
+            Serial.println();
+        } else {
+            Serial.print("Unable To Find ");
+            Serial.println(TESTFILE);
+            Serial.println();
         }
-         
-        f.close();
-      }
-      Serial.println();
-     } else {
-      Serial.print("Unable To Find ");
-      Serial.println(TESTFILE);
-      Serial.println();
     }
-  }
-  
 }
 
-void checkWeight(){
-  timeClient.update();
-  if(timeClient.getEpochTime()/86400 != currentDay){
-    newDay();
-  }
- //weight checking
-  if (fillingMode == 1) {
-    if (millis() > timeMillis + FILLING_THRESHOLD_TIME) {
-      timeMillis = millis();
-      weight = getWeight();
-      if (weight - weightPrev > FILLING_THRESHOLD_WEIGHT) {
-        fillingMode = 2;
-      } else {
-        fillingMode = 0;
-      }
+void checkWeight() {
+    timeClient.update();
+    if(timeClient.getEpochTime() / 86400 != currentDay) {
+        newDay();
     }
-  } else {
-    if (fillingMode == 2) {
-      if (millis() > timeMillis + WEIGHT_TAKING_DELAY_FILLING) {
-        timeMillis = millis();
-        weight = getWeight();
-        if (weight - weightPrev < LOADCELL_ERROR_MARGIN) {
-          fillingMode = 0;
-        }
-      }
-    } else {
-      timeMillis = millis();
-      if (millis() > timeMillis + WEIGHT_TAKING_DELAY){ //checks whether the weight has to be measured again.
-        weight = getWeight();
-        if (getWeight() > PEDESTAL_WEIGHT_EMPTY + LOADCELL_ERROR_MARGIN) {
-          weightPrev = weight;
-          int deltaWeight = weight - weightPrev;
-          if (abs(deltaWeight) > LOADCELL_ERROR_MARGIN) {
-            if (deltaWeight > FILLING_THRESHOLD_WEIGHT) {
-              fillingMode = 1;
+
+    //weight checking
+    if (fillingMode == 1) {
+        if (millis() > timeMillis + FILLING_THRESHOLD_TIME) {
+            timeMillis = millis();
+            weight = getWeight();
+            if (weight - weightPrev > FILLING_THRESHOLD_WEIGHT) {
+                fillingMode = 2;
             } else {
-              lastSessionWeight = 0 - deltaWeight;//drink(amount) method
-              //TODO change timestamp; Also needs to check whether it's a new day and then shift the data array left
-              consumptionWeek[7] = consumptionWeek[7] + lastSessionWeight;
+                fillingMode = 0;
             }
-          }
         }
-      }
+    } else {
+        if (fillingMode == 2) {
+            if (millis() > timeMillis + WEIGHT_TAKING_DELAY_FILLING) {
+                timeMillis = millis();
+                weight = getWeight();
+                if (weight - weightPrev < LOADCELL_ERROR_MARGIN) {
+                    fillingMode = 0;
+                }
+            }
+        } else {
+            timeMillis = millis();
+            if (millis() > timeMillis + WEIGHT_TAKING_DELAY) { //checks whether the weight has to be measured again.
+                weight = getWeight();
+                if (getWeight() > PEDESTAL_WEIGHT_EMPTY + LOADCELL_ERROR_MARGIN) {
+                    weightPrev = weight;
+                    int deltaWeight = weight - weightPrev;
+                    if (abs(deltaWeight) > LOADCELL_ERROR_MARGIN) {
+                        if (deltaWeight > FILLING_THRESHOLD_WEIGHT) {
+                            fillingMode = 1;
+                        } else {
+                            lastSessionWeight = 0 - deltaWeight; //drink(amount) method
+                            //TODO change timestamp; Also needs to check whether it's a new day and then shift the data array left
+                            consumptionWeek[7] = consumptionWeek[7] + lastSessionWeight;
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
 }
 
 //establishes connections to websites
@@ -555,11 +554,11 @@ void setup() {
 
   Serial.println("Initializing LED Strip");
   strip.begin(); 
-  for(int i=0;i<strip.numPixels();i++){
+  for(int i = 0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, strip.Color(0, 0, 0));
     strip.show();
   }
-   Serial.println("LED strip Initialized");
+  Serial.println("LED strip Initialized");
 
   timeClient.begin();
   Serial.println("NTP client Initialized");
@@ -578,7 +577,7 @@ void setup() {
   client.setInsecure();
   //current day for newDay
   timeClient.update();
-  currentDay = timeClient.getEpochTime()/86400;
+  currentDay = timeClient.getEpochTime() / 86400;
 
   //Load cell calibration
   Serial.println(scale2.read_average(5));
@@ -619,30 +618,30 @@ void setup() {
 }
 
 void loop() {
-  //mqtt loop
-  /*//mqtt reconnecting 
-   if (!client.connected()) {
-    reconnect();
-  }
-  //mqtt loop
-  client.loop();*/
+    //mqtt loop
+    /*//mqtt reconnecting 
+    if (!client.connected()) {
+        reconnect();
+    }
+    //mqtt loop
+    client.loop();*/
 
-  Serial.print("Result: ");
-  Serial.println(getWeight());
-  //delay(1000);
+    Serial.print("Result: ");
+    Serial.println(getWeight());
+    //delay(1000);
   
 
 
-  //checkWeight();
+    //checkWeight();
 
-  setLed(1);
+    setLed(1);
 
-  //Update variables
-  maxWeight = maxWeight();
-  currentWeight = getWeight();
-  lastDrankAmount = lastDrankAmount();
-  lastDrankDate = lastDrankDate(int i); //<<< replace "int i"
-  drankDay = drankDay(int day);         //<<< replace "int day";
+    //Update variables
+    maxWeight = maxWeight();
+    currentWeight = getWeight();
+    lastDrankAmount = lastDrankAmount();
+    lastDrankDate = lastDrankDate(int i); //<<< replace "int i"
+    drankDay = drankDay(int day);         //<<< replace "int day";
 
-  MDNS.update();
+    MDNS.update();
 }
