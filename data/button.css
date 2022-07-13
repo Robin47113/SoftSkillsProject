@@ -1,0 +1,498 @@
+/* for Buttons */
+/* hover-effect based on https://www.w3schools.com/css/tryit.asp?filename=trycss_buttons_animate1*/
+
+.btn-st {
+  font-family: 'ABeeZee', Helvetica;
+  display: inline-block;
+  border-radius: 4px;
+  border: none;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-fwd span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.btn-fwd span::after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.btn-fwd:hover span {
+  padding-right: 25px;
+}
+
+.btn-st:hover span::after {
+  opacity: 1;
+  right: 0;
+}
+
+.btn-light {
+  color: white !important;
+  background-color: rgba(255,255,255,0.2);
+  font-size: 20px;
+  padding: 15px;
+  width: 200px;
+  margin: 5px;
+}
+
+.btn-light:hover {
+  background-color: rgba(255,255,255,0.3)
+}
+
+.btn-long {
+  width: 400px;
+}
+
+@media screen and (max-width: 500px) {
+  .btn-long {
+  width: 250px;
+  }
+}
+
+.btn-special {
+  color: white;
+  font-weight: bold;
+  background-color: rgba(21,169,122,0.7);
+  padding: 20px;
+  width: 350px;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+.btn-special > span {
+  font-size: 30px;
+}
+
+@media screen and (max-width: 900px) {
+  .btn-special {
+    width: 250px;
+  }
+
+  .btn-special > span {
+    font-size: 20px;
+  }
+}
+
+.btn-plus {
+  width: 220px;
+}
+
+.btn-plus span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+  line-height: 25px;
+  vertical-align: middle;
+}
+
+.btn-plus span::before{
+  content: '\002b';
+  font-weight: bold;
+  font-size: 40px;
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: -25px;
+  transition: 0.5s;
+  line-height: 25px;
+  vertical-align: middle;
+}
+
+.btn-plus:hover span {
+  padding-left: 35px;
+}
+
+.btn-plus:hover span::before {
+  opacity: 1;
+  left: 0;
+}
+
+.btn-go {
+  background-color: rgba(21,169,122,0.7);
+}
+
+.btn-go:hover {
+  background-color: rgba(21,169,122,1);
+}
+
+@media screen and (max-width: 400px) {
+  .btn-light, .btn-go {
+    width: 90%;
+  }
+
+  .btn-plus {
+    width: 80%;
+  }
+
+  .btn-long {
+    width: 250px;
+    }
+}
+
+.btn-special:hover {
+  background-color: rgba(21,169,122,1);
+}
+
+.btn-vote-up, .btn-vote-down, .btn-remove, .btn-add {
+  color:white;
+  /*background-color: rgb(111, 199, 111);*/
+  background-color: #003e6b;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+  line-height: 20px;
+  vertical-align: middle;
+  border: none;
+  border-radius: 5px 0px 0px 5px;
+  margin-bottom: 5px;
+}
+
+.btn-vote-down {
+  border-radius: 0px 5px 5px 0px;
+  margin-left: -10px !important;
+}
+
+.btn-vote-up:hover {
+  background-color: rgb(48, 139, 139);
+}
+
+.btn-vote-up:active, .upvoted {
+  background-color: rgb(25, 117, 117);
+}
+
+.btn-vote-down:hover {
+  background-color: rgb(114, 48, 48);
+}
+
+.btn-vote-down:active, .downvoted {
+  background-color: rgb(94, 31, 31);
+}
+
+.btn-remove, .btn-add {
+  line-height: 18px;
+  width: 18px;
+  margin: 8px 0 10px 5px;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.btn-remove {
+  background-color: #A22F2F
+}
+
+.btn-add {
+  background-color: rgb(20, 116, 20);
+}
+
+
+.btn-remove:hover {
+  background-color: rgb(197, 95, 95);
+}
+
+.btn-add:hover {
+  background-color: rgb(39, 151, 39);
+}
+
+.btn-bigger {
+  width: 40%;
+  max-width: 80px;
+  height: 40px;
+  margin: 5px;
+  font-size: 18px;
+}
+
+.btn-plus:hover span::before {
+  opacity: 1;
+  left: 0;
+}
+
+.btn-go {
+  background-color: rgba(21,169,122,0.7);
+}
+
+.btn-go:hover {
+  background-color: rgba(21,169,122,1);
+}
+
+@media screen and (max-width: 400px) {
+  .btn-light, .btn-go {
+    width: 90%;
+  }
+
+  .btn-plus {
+    width: 80%;
+  }
+
+  .btn-long {
+    width: 250px;
+    }
+}
+
+/* checkbox styling based on https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_custom_checkbox */
+/* The container */
+.container {
+  display: inline-block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.container-select {
+  line-height: 1;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  margin-bottom: 5px;
+  margin-left:20px;
+  word-wrap: break-word;
+}
+
+.container-select input {
+  position: relative;
+  opacity: 70%;
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
+}
+
+.container-select input[type='checkbox'] {
+  margin-left:-18px;
+  margin-bottom:5px;
+}
+
+label.container-select {
+  text-transform: none;
+  letter-spacing: 0.1em;
+  font-weight: normal;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: rgba(255,255,255,0.2);
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: rgba(255,255,255,0.5);
+}
+
+/* When the checkbox is checked, add a fitting background */
+.container input:checked ~ .checkmark {
+  background-color:  rgb(20, 116, 20);
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+/* standard checkbox */
+.checkb {
+  max-width: 400px;
+  display: block;
+  text-transform: none;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  position: relative;
+  padding-left: 35px;
+  padding-top: 0;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkb input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkb-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 3px;
+}
+
+.checkb-checkmark-err {
+  border-style: solid;
+  /* border-color: rgb(161, 27, 27); */
+  border-color: rgb(219, 77, 29)
+}
+
+/* On mouse-over, add a background color */
+.checkb:hover input ~ .checkb-checkmark {
+  background-color: rgba(255,255,255,0.3);
+}
+
+/* When the checkbox is checked, add a background */
+.checkb input:checked ~ .checkb-checkmark {
+  background-color: rgba(255,255,255,0.2);
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkb-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkb input:checked ~ .checkb-checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+
+.checkb .checkb-checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0; 
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.correct {
+  color: rgb(111, 199, 111);
+}
+
+.correct::after {
+  content: ' \2713';
+}
+
+.wrong {
+  color: rgb(255, 107, 107);
+}
+
+.wrong::after {
+  content: ' \2717';
+}
+
+.checkmark-info {
+  text-transform: none; 
+  font-weight: normal; 
+  letter-spacing: 0.1em
+}
+
+/* for Upload */
+
+input[type="file"] {
+  display: none;
+}
+
+.btn-upload {
+  font-size: 16px;
+  width: 250px;
+  font-weight: lighter;
+}
+
+#customBtn {
+  color: white !important;
+  background-color: rgba(255,255,255,0.2);
+  font-size: 20px;
+  padding: 15px;
+  width: 200px;
+  margin: 5px;
+  font-family: 'ABeeZee', Helvetica;
+  display: inline-block;
+  border-radius: 4px;
+  border: none;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  text-decoration: none;
+}
+#customBtn:hover {
+  background-color: rgba(255,255,255,0.3)
+}
+#customBtn::after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+span.label {
+  font-family: serif;
+  font-weight: normal;
+}
+span.icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 42px;
+  height: 42px;
+}
+span.buttonText {
+  display: inline-block;
+  vertical-align: middle;
+  padding-left: 42px;
+  padding-right: 42px;
+  font-size: 14px;
+  font-weight: bold;
+  /* Use the Roboto font that is loaded in the <head> */
+  font-family: 'Roboto', sans-serif;
+}
