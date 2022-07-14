@@ -414,16 +414,14 @@ void checkWeight(){
       timeMillis = millis();
       if (millis() > timeMillis + WEIGHT_TAKING_DELAY){ //checks whether the weight has to be measured again.
         weight = getWeight();
-        if (getWeight() > PEDESTAL_WEIGHT_EMPTY + LOADCELL_ERROR_MARGIN) {
+        if (getWeight() > LOADCELL_ERROR_MARGIN) {
           weightPrev = weight;
           int deltaWeight = weight - weightPrev;
           if (abs(deltaWeight) > LOADCELL_ERROR_MARGIN) {
             if (deltaWeight > FILLING_THRESHOLD_WEIGHT) {
               fillingMode = 1;
             } else {
-              lastSessionWeight = 0 - deltaWeight;//drink(amount) method
-              //TODO change timestamp; Also needs to check whether it's a new day and then shift the data array left
-              consumptionWeek[7] = consumptionWeek[7] + lastSessionWeight;
+              drank(0 - deltaWeight);
             }
           }
         }
