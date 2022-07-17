@@ -3,28 +3,27 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta charset="utf-8">
-        <link rel ="shortcut icon" type="image/png" href ="water.png">
+        <link rel ="shortcut icon" type="image/png" href ="https://cdn-icons-png.flaticon.com/512/824/824239.png">
         <link href='https://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet'>
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="stylesheet" type="text/css" href="button.css">
-        <link rel="stylesheet" type="text/css" href="material_preview.css">
         <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=DM%20Mono'>
-        <title>Nutzungsbedingungen | Water Deluxe</title>
+        <title>Nutzungsbedingungen | Hydration Tracker</title>
     </head>
     <body>
         <header class="header">
             <div class="flex-topbar">
             <nav style="text-align: left">
                 <a href="http://esp8266.local/">
-                    <img src="info.png" title="Startseite" alt="Startseite" width="30" height="30"></a>
+                    <img src="https://cdn-icons-png.flaticon.com/512/7423/7423011.png" title="Startseite" alt="Startseite" width="40" height="40"></a>
                 &nbsp;
 
                 <a href="http://esp8266.local/infopage.php">
-                <img src="data.png" title="Startseite" alt="Startseite" width="30" height="30"></a>
+                    <img src="https://cdn-icons-png.flaticon.com/512/263/263164.png" title="Infoseite" alt="Infoseite" width="40" height="40"></a>
                 &nbsp;
             
             </nav>
-            <img src="water.png" alt="Unser Logo: Eine Trinkfalsche">
+            <img src="https://cdn-icons-png.flaticon.com/512/824/824239.png" alt="Unser Logo: Eine Trinkflasche">
             </div>
         </header>
         <article class="pagebody textonly">
@@ -100,12 +99,12 @@
             <a class="textlink" target="_blank" href="https://www.juraforum.de/muster-nutzungsbedingungen-forum/"><span>Quelle: Forenregeln-Muster von Juraforum.de</span></a>
         </article>
         <footer class="flex-container-footer">
-            <section>
-                <!-- normally inline style shoudl not be used -->
-                <img style="width: 150px; height: auto" src="water.png" alt="logo">
+             <section>
+                <!-- normally inline style should not be used -->
+                <img style="width: 150px; height: auto" src="https://cdn-icons-png.flaticon.com/512/824/824239.png" alt="logo">
             </section>
             <section style="margin-top: auto; margin-bottom: auto;">
-                <p style="font-size: 40px; margin: 0px;" class="title"> Water Deluxe</p>
+                <p style="font-size: 40px; margin: 0px;" class="title">Hydration Tracker</p>
                 <p>Alle Bilder: Freepik | Flaticon</p>  
             </section>
             <section>
