@@ -58,7 +58,7 @@ int lastSessionWeight = 0;
 int lastSessionTimestamp[3] = {0,0,0}; //hour:minute:seconds
 int currentDay;//for newDay() / days from 1.Jan 1970
 
-
+long firstPixelHue = 0;//for rainbow wave
 
 //mqtt settings
 /*
@@ -133,11 +133,12 @@ int drankDay(int day){
 
 //returns Water left in gramms
 int getWeight(){
-return (scale2.get_units(10)-Loadcell2Tare)/Loadcell2cal-BOTTLE_WEIGHT_EMPTY;
+return (scale2.get_units(5)-Loadcell2Tare)/Loadcell2cal-BOTTLE_WEIGHT_EMPTY;
 }
 
 //sets Led
 void setLed(int mode){
+  //r-g-b cycling
   if(mode==0){
     for(int i=0;i<strip.numPixels();i++){
       strip.setPixelColor(i, strip.Color(255, 0, 0));
@@ -155,22 +156,25 @@ void setLed(int mode){
       delay(100);
   }
 }
+//rainbow wave
   if(mode==1){
-  for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 256) {
     for(int i=0; i<strip.numPixels(); i++) { 
       int pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
       strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
     }
+    firstPixelHue+=256*2;
+    if(firstPixelHue>=5*65536){
+      firstPixelHue=0;
+    }
     strip.show();
-    delay(10);
-  }
 }
-
+//fill percentage
   if(mode==2){
   float fillp = getWeight()/BOTTLE_WEIGHT_MAX;
   fillp  = fillp*LED_COUNT;
+  strip.clear();
   for(int i=0;i<floorf(fillp);i++){
-    strip.setPixelColor(i, strip.Color(0,255 , 255));
+    strip.setPixelColor(i, strip.Color(0,0,255));
     if(i+1==floorf(fillp)){
       strip.setPixelColor(i+1,strip.Color(0,0,255*(fillp-floorf(fillp))));
     }
@@ -197,6 +201,10 @@ void discord_send(String content) {
 
 //saves amount(g) to saved.txt with timestamp and updates variables
 void drank (int amount){
+    timeClient.update();
+  if(timeClient.getEpochTime()/86400 != currentDay){
+    newDay();
+  }
 if (SPIFFS.exists(TESTFILE)) {
  File f = SPIFFS.open(TESTFILE, "w+");
       if (!f) {
@@ -386,10 +394,7 @@ void loadData(){
 }
 
 void checkWeight(){
-  timeClient.update();
-  if(timeClient.getEpochTime()/86400 != currentDay){
-    newDay();
-  }
+
  //weight checking
   if (fillingMode == 1) {
     if (millis() > timeMillis + FILLING_THRESHOLD_TIME) {
@@ -414,16 +419,14 @@ void checkWeight(){
       timeMillis = millis();
       if (millis() > timeMillis + WEIGHT_TAKING_DELAY){ //checks whether the weight has to be measured again.
         weight = getWeight();
-        if (getWeight() > PEDESTAL_WEIGHT_EMPTY + LOADCELL_ERROR_MARGIN) {
+        if (weight > PEDESTAL_WEIGHT_EMPTY + LOADCELL_ERROR_MARGIN) {
           weightPrev = weight;
           int deltaWeight = weight - weightPrev;
           if (abs(deltaWeight) > LOADCELL_ERROR_MARGIN) {
             if (deltaWeight > FILLING_THRESHOLD_WEIGHT) {
               fillingMode = 1;
             } else {
-              lastSessionWeight = 0 - deltaWeight;//drink(amount) method
-              //TODO change timestamp; Also needs to check whether it's a new day and then shift the data array left
-              consumptionWeek[7] = consumptionWeek[7] + lastSessionWeight;
+              drank(0 - deltaWeight);
             }
           }
         }
@@ -520,15 +523,15 @@ void loop() {
   //mqtt loop
   client.loop();*/
 
-  Serial.print("Result: ");
-  Serial.println(getWeight());
+  //Serial.print("Result: ");
+  //Serial.println(getWeight());
   //delay(1000);
   
 
 
-  //checkWeight();
+  checkWeight();
 
-  setLed(1);
+  setLed(3);
   
 }
 
