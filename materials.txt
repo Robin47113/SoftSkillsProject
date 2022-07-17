@@ -1,9 +1,9 @@
 
 ESP-8266 (Wemos D1 mini board)
-Load-Cell with ADC (HX711)
-Boost-Converter
-BMS with charger
+Load-Cell with ADC (HX711)x3
+Boost-Converter (MT3608)
+BMS with charger (TP4056)
 18650 Lion
-RGB-Leds
+RGB-Leds (WS2182B)x15
 
 
