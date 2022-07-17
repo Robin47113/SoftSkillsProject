@@ -35,6 +35,10 @@ void sendRequests() {
 
   //Daten-Anzeige auf der Startseite
   //Maximales Gewicht
+  server.on("/currentWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(currentWeight));
+  });
+  
   server.on("/maxWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(200, "text/plain", String(maxWeight));
   });
@@ -43,15 +47,43 @@ void sendRequests() {
     request->send(200, "text/plain", String(lastDrankAmount));
   });
 
-  server.on("/lastDrankDate", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(lastDrankDate));
-  });
+  server.on("/lastDrankDateHour", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(lastDrankDate[0]));
+  }
 
-  server.on("/DrankDay", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(drankDay));
-  });
+  server.on("/lastDrankDateMinute", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(lastDrankDate[1]));
+  }
 
-  server.on("/currentWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(currentWeight));
-  });
+  server.on("/lastDrankDateSecond", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(lastDrankDate[2]));
+  }
+
+  server.on("/DrankDay1", HTTP_GET, [](AsyncWebServerRequest * request) {
+        request->send(200, "text/plain", String(drankDay[0]));
+  }
+
+  server.on("/DrankDay2", HTTP_GET, [](AsyncWebServerRequest * request) {
+        request->send(200, "text/plain", String(drankDay[1]));
+  }
+
+  server.on("/DrankDay3", HTTP_GET, [](AsyncWebServerRequest * request) {
+        request->send(200, "text/plain", String(drankDay[2]));
+  }
+
+  server.on("/DrankDay4", HTTP_GET, [](AsyncWebServerRequest * request) {
+        request->send(200, "text/plain", String(drankDay[3]));
+  }
+
+  server.on("/DrankDay5", HTTP_GET, [](AsyncWebServerRequest * request) {
+        request->send(200, "text/plain", String(drankDay[4]));
+  }
+
+  server.on("/DrankDay6", HTTP_GET, [](AsyncWebServerRequest * request) {
+        request->send(200, "text/plain", String(drankDay[5]));
+  }
+
+  server.on("/DrankDay7", HTTP_GET, [](AsyncWebServerRequest * request) {
+        request->send(200, "text/plain", String(drankDay[6]));
+  }
 }

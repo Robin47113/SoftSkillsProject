@@ -35,8 +35,14 @@
                 <span>Aktuelles Gewicht:</span>        <span id="currentWeight">0</span><br>
                 <span>Maximalgewicht:</span>           <span id="maxWeight">0</span><br>
                 <span>Zuletzt getrunkene Menge:</span> <span id="lastDrankAmount">0</span><br>
-                <span>Zuletzt getrunken um:</span>     <span id="lastDrankDate">0</span><br>
-                <span>Letzte Woche getrunken:</span>   <span id="DrankDay">0</span><br>
+                <span>Zuletzt getrunken um:</span>     <span id="lastDrankDateHour">0</span> : <span id="lastDrankDateMinute">0</span> : <span id="lastDrankDateSecond">0</span><br>
+                <span>Letzte Woche getrunken:</span>   <span id="DrankDay1">0</span><br>
+                <span>Letzte Woche getrunken:</span>   <span id="DrankDay2">0</span><br>
+                <span>Letzte Woche getrunken:</span>   <span id="DrankDay3">0</span><br>
+                <span>Letzte Woche getrunken:</span>   <span id="DrankDay4">0</span><br>
+                <span>Letzte Woche getrunken:</span>   <span id="DrankDay5">0</span><br>
+                <span>Letzte Woche getrunken:</span>   <span id="DrankDay6">0</span><br>
+                <span>Letzte Woche getrunken:</span>   <span id="DrankDay7">0</span><br>
                 <br>
             </article>
         </div>
@@ -75,24 +81,87 @@
                 valueRequestLastDrankAmount.send();
 
                 //Zuletzt getrunken (Uhrzeit)
-                var valueRequestLastDrankDate = new XMLHttpRequest();
-                valueRequestLastDrankDate.onreadystatechange = function () {
+                var valueRequestLastDrankDateHour = new XMLHttpRequest();
+                valueRequestLastDrankDateHour.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("lastDrankDate").innerHTML = this.responseText;
+                        document.getElementById("lastDrankDateHour").innerHTML = this.responseText;
                     }
                 };
-                valueRequestLastDrankDate.open("GET", "lastDrankDate", true);
-                valueRequestLastDrankDate.send();
+                valueRequestLastDrankDateHour.open("GET", "lastDrankDateHour", true);
+                valueRequestLastDrankDateHour.send();
+
+                var valueRequestLastDrankDateSecond = new XMLHttpRequest();
+                valueRequestLastDrankDateSecond.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("lastDrankDateSecond").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestLastDrankDateSecond.open("GET", "lastDrankDateSecond", true);
+                valueRequestLastDrankDateSecond.send();
 
                 //Letzte Woche getrunken (Menge)
-                var valueRequestDrankDay = new XMLHttpRequest();
-                valueRequestDrankDay.onreadystatechange = function () {
+                var valueRequestDrankDay1 = new XMLHttpRequest();
+                valueRequestDrankDay1.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("DrankDay").innerHTML = this.responseText;
+                        document.getElementById("DrankDay1").innerHTML = this.responseText;
                     }
                 };
-                valueRequestDrankDay.open("GET", "DrankDay", true);
-                valueRequestDrankDay.send();
+                valueRequestDrankDay1.open("GET", "DrankDay1", true);
+                valueRequestDrankDay1.send();
+
+                var valueRequestDrankDay2 = new XMLHttpRequest();
+                valueRequestDrankDay2.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay2").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestDrankDay2.open("GET", "DrankDay2", true);
+                valueRequestDrankDay2.send();
+
+                 var valueRequestDrankDay3 = new XMLHttpRequest();
+                valueRequestDrankDay3.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay3").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestDrankDay3.open("GET", "DrankDay3", true);
+                valueRequestDrankDay3.send();
+
+                 var valueRequestDrankDay4 = new XMLHttpRequest();
+                valueRequestDrankDay4.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay4").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestDrankDay4.open("GET", "DrankDay4", true);
+                valueRequestDrankDay4.send();
+
+                 var valueRequestDrankDay5 = new XMLHttpRequest();
+                valueRequestDrankDay5.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay5").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestDrankDay5.open("GET", "DrankDay5", true);
+                valueRequestDrankDay5.send();
+
+                 var valueRequestDrankDay6 = new XMLHttpRequest();
+                valueRequestDrankDay6.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay6").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestDrankDay6.open("GET", "DrankDay6", true);
+                valueRequestDrankDay6.send();
+
+                 var valueRequestDrankDay7 = new XMLHttpRequest();
+                valueRequestDrankDay7.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay7").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestDrankDay7.open("GET", "DrankDay7", true);
+                valueRequestDrankDay7.send();
             }; 
 
             //Aktueller Fuellstand
@@ -124,10 +193,32 @@
                 var valueRequest = new XMLHttpRequest();
                 valueRequest.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("lastDrankDate").innerHTML = this.responseText;
+                        document.getElementById("lastDrankDateHour").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "lastDrankDate", true);
+                valueRequest.open("GET", "lastDrankDateHour", true);
+                valueRequest.send();
+            }, 60000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("lastDrankDateMinute").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "lastDrankDateMinute", true);
+                valueRequest.send();
+            }, 60000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("lastDrankDateSecond").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "lastDrankDateSecond", true);
                 valueRequest.send();
             }, 60000);
 
@@ -136,10 +227,76 @@
                 var valueRequest = new XMLHttpRequest();
                 valueRequest.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("DrankDay").innerHTML = this.responseText;
+                        document.getElementById("DrankDay1").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay", true);
+                valueRequest.open("GET", "DrankDay1", true);
+                valueRequest.send();
+            }, 3600000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay2").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "DrankDay2", true);
+                valueRequest.send();
+            }, 3600000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay3").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "DrankDay3", true);
+                valueRequest.send();
+            }, 3600000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay4").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "DrankDay4", true);
+                valueRequest.send();
+            }, 3600000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay5").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "DrankDay5", true);
+                valueRequest.send();
+            }, 3600000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay6").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "DrankDay6", true);
+                valueRequest.send();
+            }, 3600000);
+
+            setInterval(function () {
+                var valueRequest = new XMLHttpRequest();
+                valueRequest.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("DrankDay7").innerHTML = this.responseText;
+                    }
+                };
+                valueRequest.open("GET", "DrankDay7", true);
                 valueRequest.send();
             }, 3600000);
         </script>
