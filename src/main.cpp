@@ -3,13 +3,57 @@
 #include <Adafruit_NeoPixel.h>//leds
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>//mqtt
-#include <DNSServer.h>
-#include <ESP8266WebServer.h>
-#include <WifiManager.h>
-#include <FS.h>//spiffs
+//#include <DNSServer.h>
+//#include <ESP8266WebServer.h>
+//#include <WifiManager.h>
+//#include <FS.h>//spiffs
 #include <NTPClient.h>//ntp (time)
 #include <WiFiUdp.h>//ntp
 #include <ESP8266HTTPClient.h>//discord messaging
+
+#include <ESP8266WiFi.h>
+//Asynchroner Webserver
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+
+//DNS
+#include <ESP8266mDNS.h>
+
+//SPIFFS
+#include <FS.h>
+
+//WiFi-Credentials
+#include "WiFiConnection.h";
+
+char* dns_name = "ESP8266";   //Startseite (DNS): "http://esp8266.local/"
+
+AsyncWebServer server(80);    //Standard-Port
+
+//Platzhalter-Variable für den Webseitenaufruf
+int tmpValue = 0;
+
+//Variablen für die Anzeige der Messdaten (später aus Methoden beziehen)
+int maxWeight = 0;
+int lastDrankAmount = 0;
+int lastDrankDateHour = 0;
+int lastDrankDateMinute = 0;
+int lastDrankDateSecond = 0;
+
+int[] lastDrankDate = { lastDrankDateHour, lastDrankDateMinute, lastDrankDateSecond };
+
+int drankDay1 = 0;
+int drankDay2 = 0;
+int drankDay3 = 0;
+int drankDay4 = 0;
+int drankDay5 = 0;
+int drankDay6 = 0;
+int drankDay7 = 0;
+
+int[] drankDay = { drankDay1, drankDay2, drankDay3, drankDay4, drankDay5, drankDay6, drankDay7 };
+
+int currentWeight = 0;
+
+#include "async_request_methods.h";
 
 /*// HX711-1 (1 load cell)
 #define LOADCELL1_DOUT_PIN D2
@@ -115,18 +159,27 @@ void reconnect() {
 
 //returns max weight of water
 int maxWeight(){
+  maxWeight = BOTTLE_WEIGHT_MAX;
   return BOTTLE_WEIGHT_MAX;
 }
 //returns amount of last drink
 int lastDrankAmount(){
+  lastDrankAmount = lastSessionWeight;
   return lastSessionWeight;
 }
-//returns date of last drink
+//returns date of last drink (Hour, Minute, Second)
 int lastDrankDate(int i){
+  lastDrankDate1 = lastSessionTimestamp[0];
+  lastDrankDate2 = lastSessionTimestamp[1];
+  lastDrankDate3 = lastSessionTimestamp[2];
   return lastSessionTimestamp[i];
 }
-//returns amount drank for last week
+//returns amount drank for last week (Array for last week)
 int drankDay(int day){
+  for (int i = 0; i < 7; i++) {
+    drankDay[0] = consumptionWeek[0];
+  }
+
   return consumptionWeek[day];
 }
 
@@ -446,9 +499,18 @@ void setup() {
   scale2.begin(LOADCELL2_DOUT_PIN, LOADCELL2_SCK_PIN);
   Serial.println("Scale2 Initialized");
 
+  SPIFFS.begin();
+  
+  WiFi.begin(ssid, password);
+
+  MDNS.begin("ESP8266");
+  
+  //Methoden für Webseitenaufruf und Parameterübergabe
+  sendRequests();
+
   //Wifimanager Initialization
-  WiFiManager wifiManager;
-  wifiManager.autoConnect("AutoConnectAP");
+  //WiFiManager wifiManager;
+  //wifiManager.autoConnect("AutoConnectAP");
   /*//mqtt Initialization
   clientmqtt.setServer(server, mqtt_port);
   clientmqtt.setCallback(callback);*/
@@ -511,6 +573,8 @@ void setup() {
   printData();
 
   timeMillis = millis();
+
+  server.begin();
 }
 
 void loop() {
@@ -531,6 +595,8 @@ void loop() {
   checkWeight();
 
   setLed(3);
+
+  MDNS.update();
   
 }
 
