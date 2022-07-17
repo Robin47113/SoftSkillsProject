@@ -1,9 +1,9 @@
 
-ESP-32 (WiFi and Bluetooth) or ESP-8266 (only WiFi)
-Load-Cell with ADC
-Boost-Converter
-BMS with charger
+ESP-8266 (Wemos D1 mini board)
+Load-Cell with ADC (HX711)x3
+Boost-Converter (MT3608)
+BMS with charger (TP4056)
 18650 Lion
-RGB-Leds (WS2812B)
+RGB-Leds (WS2182B)x15
 
 
