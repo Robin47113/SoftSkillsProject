@@ -39,7 +39,6 @@ int timeMillis; //timestamp (in millis since chip was turned on) of the last wei
 #define WEIGHT_TAKING_DELAY_FILLING 500//after this time (in milliseconds) the weight is measured again during filling.
 int fillingMode = 0;//0=normal functionality, 1=checking for Time Threshold, 2=waiting for filling to stop
 //-------weight
-#define PEDESTAL_WEIGHT_EMPTY 0
 #define BOTTLE_WEIGHT_EMPTY 0
 #define BOTTLE_WEIGHT_MAX 1000
 #define FILLING_THRESHOLD_WEIGHT 100//weight that has to be added for the bottle to accept it as being filled.
@@ -419,7 +418,7 @@ void checkWeight(){
       timeMillis = millis();
       if (millis() > timeMillis + WEIGHT_TAKING_DELAY){ //checks whether the weight has to be measured again.
         weight = getWeight();
-        if (weight > PEDESTAL_WEIGHT_EMPTY + LOADCELL_ERROR_MARGIN) {
+        if (weight > LOADCELL_ERROR_MARGIN) {
           weightPrev = weight;
           int deltaWeight = weight - weightPrev;
           if (abs(deltaWeight) > LOADCELL_ERROR_MARGIN) {
