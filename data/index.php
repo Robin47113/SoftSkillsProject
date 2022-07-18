@@ -90,6 +90,15 @@
                 valueRequestLastDrankDateHour.open("GET", "lastDrankDateHour", true);
                 valueRequestLastDrankDateHour.send();
 
+                var valueRequestLastDrankDateMinute = new XMLHttpRequest();
+                valueRequestLastDrankDateMinute.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("lastDrankDateMinute").innerHTML = this.responseText;
+                    }
+                };
+                valueRequestLastDrankDateMinute.open("GET", "lastDrankDateMinute", true);
+                valueRequestLastDrankDateMinute.send();
+
                 var valueRequestLastDrankDateSecond = new XMLHttpRequest();
                 valueRequestLastDrankDateSecond.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
@@ -164,141 +173,122 @@
                 valueRequestDrankDay7.send();
             }; 
 
-            //Aktueller Fuellstand
+            //wird jede Minute aktualisiert
             setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                //Aktueller Fuellstand
+                var valueRequestCurrentWeight = new XMLHttpRequest();
+                valueRequestCurrentWeight.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("currentWeight").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "currentWeight", true);
-                valueRequest.send();
-            }, 60000);
+                valueRequestCurrentWeight.open("GET", "currentWeight", true);
+                valueRequestCurrentWeight.send();
 
-            //Zuletzt getrunken Menge
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                //Zuletzt getrunkene Menge
+                var valueRequestAmount = new XMLHttpRequest();
+                valueRequestAmount.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("lastDrankAmount").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "lastDrankAmount", true);
-                valueRequest.send();
-            }, 60000);
+                valueRequestAmount.open("GET", "lastDrankAmount", true);
+                valueRequestAmount.send();
 
-            //Zuletzt getrunken Uhrzeit
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                //Zuletzt getrunken Uhrzeit
+                var valueRequestHour = new XMLHttpRequest();
+                valueRequestHour.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("lastDrankDateHour").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "lastDrankDateHour", true);
-                valueRequest.send();
-            }, 60000);
+                valueRequestHour.open("GET", "lastDrankDateHour", true);
+                valueRequestHour.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequestMinute = new XMLHttpRequest();
+                valueRequestMinute.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("lastDrankDateMinute").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "lastDrankDateMinute", true);
-                valueRequest.send();
-            }, 60000);
+                valueRequestMinute.open("GET", "lastDrankDateMinute", true);
+                valueRequestMinute.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequestSecond = new XMLHttpRequest();
+                valueRequestSecond.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("lastDrankDateSecond").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "lastDrankDateSecond", true);
-                valueRequest.send();
+                valueRequestSecond.open("GET", "lastDrankDateSecond", true);
+                valueRequestSecond.send();
             }, 60000);
 
-            //Letzte Woche getrunken (Menge)
+            //Letzte Woche getrunken (Menge) | wird alle 24 Stunden aktualisiert
             setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequest1 = new XMLHttpRequest();
+                valueRequest1.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("DrankDay1").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay1", true);
-                valueRequest.send();
-            }, 3600000);
+                valueRequest1.open("GET", "DrankDay1", true);
+                valueRequest1.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequest2 = new XMLHttpRequest();
+                valueRequest2.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("DrankDay2").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay2", true);
-                valueRequest.send();
-            }, 3600000);
+                valueRequest2.open("GET", "DrankDay2", true);
+                valueRequest2.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequest3 = new XMLHttpRequest();
+                valueRequest3.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("DrankDay3").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay3", true);
-                valueRequest.send();
-            }, 3600000);
+                valueRequest3.open("GET", "DrankDay3", true);
+                valueRequest3.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequest4 = new XMLHttpRequest();
+                valueRequest4.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("DrankDay4").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay4", true);
-                valueRequest.send();
-            }, 3600000);
+                valueRequest4.open("GET", "DrankDay4", true);
+                valueRequest4.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequest5 = new XMLHttpRequest();
+                valueRequest5.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("DrankDay5").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay5", true);
-                valueRequest.send();
-            }, 3600000);
+                valueRequest5.open("GET", "DrankDay5", true);
+                valueRequest5.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequest6 = new XMLHttpRequest();
+                valueRequest6.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("DrankDay6").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay6", true);
-                valueRequest.send();
-            }, 3600000);
+                valueRequest6.open("GET", "DrankDay6", true);
+                valueRequest6.send();
 
-            setInterval(function () {
-                var valueRequest = new XMLHttpRequest();
-                valueRequest.onreadystatechange = function () {
+                var valueRequest7 = new XMLHttpRequest();
+                valueRequest7.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         document.getElementById("DrankDay7").innerHTML = this.responseText;
                     }
                 };
-                valueRequest.open("GET", "DrankDay7", true);
-                valueRequest.send();
-            }, 3600000);
+                valueRequest7.open("GET", "DrankDay7", true);
+                valueRequest7.send();
+            }, 86400000);
         </script>
 
         <footer class="flex-container-footer">

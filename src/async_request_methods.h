@@ -34,56 +34,55 @@ void sendRequests() {
   });
 
   //Daten-Anzeige auf der Startseite
-  //Maximales Gewicht
   server.on("/currentWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(currentWeight));
+    request->send(200, "text/plain", String(getWeight()));
   });
   
   server.on("/maxWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(maxWeight));
+    request->send(200, "text/plain", String(maxWeight()));
   });
 
   server.on("/lastDrankAmount", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(lastDrankAmount));
+    request->send(200, "text/plain", String(lastDrankAmount()));
   });
 
   server.on("/lastDrankDateHour", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(lastDrankDate[0]));
+    request->send(200, "text/plain", String(lastSessionTimestamp[0]));
   }
 
   server.on("/lastDrankDateMinute", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(lastDrankDate[1]));
+    request->send(200, "text/plain", String(lastSessionTimestamp[1]));
   }
 
   server.on("/lastDrankDateSecond", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(lastDrankDate[2]));
+    request->send(200, "text/plain", String(lastSessionTimestamp[2]));
   }
 
   server.on("/DrankDay1", HTTP_GET, [](AsyncWebServerRequest * request) {
-        request->send(200, "text/plain", String(drankDay[0]));
+    request->send(200, "text/plain", String(consumptionWeek[0]));
   }
 
   server.on("/DrankDay2", HTTP_GET, [](AsyncWebServerRequest * request) {
-        request->send(200, "text/plain", String(drankDay[1]));
+    request->send(200, "text/plain", String(consumptionWeek[1]));
   }
 
   server.on("/DrankDay3", HTTP_GET, [](AsyncWebServerRequest * request) {
-        request->send(200, "text/plain", String(drankDay[2]));
+    request->send(200, "text/plain", String(consumptionWeek[2]));
   }
 
   server.on("/DrankDay4", HTTP_GET, [](AsyncWebServerRequest * request) {
-        request->send(200, "text/plain", String(drankDay[3]));
+    request->send(200, "text/plain", String(consumptionWeek[3]));
   }
 
   server.on("/DrankDay5", HTTP_GET, [](AsyncWebServerRequest * request) {
-        request->send(200, "text/plain", String(drankDay[4]));
+    request->send(200, "text/plain", String(consumptionWeek[4]));
   }
 
   server.on("/DrankDay6", HTTP_GET, [](AsyncWebServerRequest * request) {
-        request->send(200, "text/plain", String(drankDay[5]));
+    request->send(200, "text/plain", String(consumptionWeek[5]));
   }
 
   server.on("/DrankDay7", HTTP_GET, [](AsyncWebServerRequest * request) {
-        request->send(200, "text/plain", String(drankDay[6]));
+    request->send(200, "text/plain", String(consumptionWeek[6]));
   }
 }
