@@ -29,10 +29,10 @@ char* dns_name = "ESP8266";   //Startseite (DNS): "http://esp8266.local/"
 
 AsyncWebServer server(80);    //Standard-Port
 
-//Platzhalter-Variable für den Webseitenaufruf
+//Platzhalter-Variable fï¿½r den Webseitenaufruf
 int tmpValue = 0;
 
-//Variablen für die Anzeige der Messdaten (später aus Methoden beziehen)
+//Variablen fï¿½r die Anzeige der Messdaten (spï¿½ter aus Methoden beziehen)
 int maxWeight = 0;
 int lastDrankAmount = 0;
 int lastDrankDateHour = 0;
@@ -82,6 +82,11 @@ int timeMillis; //timestamp (in millis since chip was turned on) of the last wei
 #define WEIGHT_TAKING_DELAY 10000//after this time (in milliseconds) the weight is measured again.
 #define WEIGHT_TAKING_DELAY_FILLING 500//after this time (in milliseconds) the weight is measured again during filling.
 int fillingMode = 0;//0=normal functionality, 1=checking for Time Threshold, 2=waiting for filling to stop
+int discordNotifMillis = 0; //timestamp (in millis since chip was turned on) of the last time the discord notification conditions were checked.
+#define DISCORD_NOTIF_CHECKING_DELAY 30000//after this time (in milliseconds) the discord notification conditions are checked again.
+#define DISCORD_ACTIVE_BEGIN 15//from this hour forward discord notifications are send.
+#define DISCORD_ACTIVE_MIDDLE 19//at this hour conditions for sending notifications become less strict.
+#define DISCORD_ACTIVE_END 22//at this hour the program stops sending discord notifications.
 //-------weight
 #define BOTTLE_WEIGHT_EMPTY 0
 #define BOTTLE_WEIGHT_MAX 1000
@@ -505,7 +510,7 @@ void setup() {
 
   MDNS.begin("ESP8266");
   
-  //Methoden für Webseitenaufruf und Parameterübergabe
+  //Methoden fï¿½r Webseitenaufruf und Parameterï¿½bergabe
   sendRequests();
 
   //Wifimanager Initialization
@@ -590,7 +595,19 @@ void loop() {
   //Serial.println(getWeight());
   //delay(1000);
   
-
+  if (discordNotifMillis + DISCORD_NOTIF_CHECKING_DELAY < millis()) {
+    discordNotifMillis = millis();
+    timeClient.update();
+    int h = timeClient.getHours();
+    if (h > DISCORD_ACTIVE_BEGIN && h < DISCORD_ACTIVE_END) {
+      if ((h < DISCORD_ACTIVE_MIDDLE && 2000/(double)consumptionWeek(7) < (24/((double) h)))
+      || (h > DISCORD_ACTIVE_MIDDLE && consumptionWeek(7) < 2000)) {//2000 means 2 liters every day.
+        discord_send("Hey! Du hast deinen tÃ¤glichen Wasserbedarf noch nicht erfÃ¼llt. Es fehlen heute noch "
+        + (2000 - consumptionWeek(7)) + " Milliliter!");
+      }
+    }
+  }
+  
 
   checkWeight();
 
