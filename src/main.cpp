@@ -25,33 +25,12 @@
 //WiFi-Credentials
 #include "WiFiConnection.h";
 
-char* dns_name = "ESP8266";   //Startseite (DNS): "http://esp8266.local/"
+char* dns_name = "ESP8266";   //Homepage (DNS): "http://esp8266.local/"
 
 AsyncWebServer server(80);    //Standard-Port
 
-//Platzhalter-Variable f�r den Webseitenaufruf
+//placeholder variable for website request
 int tmpValue = 0;
-
-//Variablen f�r die Anzeige der Messdaten (sp�ter aus Methoden beziehen)
-int maxWeight = 0;
-int lastDrankAmount = 0;
-int lastDrankDateHour = 0;
-int lastDrankDateMinute = 0;
-int lastDrankDateSecond = 0;
-
-int[] lastDrankDate = { lastDrankDateHour, lastDrankDateMinute, lastDrankDateSecond };
-
-int drankDay1 = 0;
-int drankDay2 = 0;
-int drankDay3 = 0;
-int drankDay4 = 0;
-int drankDay5 = 0;
-int drankDay6 = 0;
-int drankDay7 = 0;
-
-int[] drankDay = { drankDay1, drankDay2, drankDay3, drankDay4, drankDay5, drankDay6, drankDay7 };
-
-int currentWeight = 0;
 
 #include "async_request_methods.h";
 
@@ -164,27 +143,18 @@ void reconnect() {
 
 //returns max weight of water
 int maxWeight(){
-  maxWeight = BOTTLE_WEIGHT_MAX;
   return BOTTLE_WEIGHT_MAX;
 }
 //returns amount of last drink
 int lastDrankAmount(){
-  lastDrankAmount = lastSessionWeight;
   return lastSessionWeight;
 }
 //returns date of last drink (Hour, Minute, Second)
 int lastDrankDate(int i){
-  lastDrankDate1 = lastSessionTimestamp[0];
-  lastDrankDate2 = lastSessionTimestamp[1];
-  lastDrankDate3 = lastSessionTimestamp[2];
   return lastSessionTimestamp[i];
 }
 //returns amount drank for last week (Array for last week)
 int drankDay(int day){
-  for (int i = 0; i < 7; i++) {
-    drankDay[0] = consumptionWeek[0];
-  }
-
   return consumptionWeek[day];
 }
 
@@ -305,7 +275,6 @@ if (SPIFFS.exists(TESTFILE)) {
     Serial.println(TESTFILE);
     Serial.println();
   }
-  
 }
 
 //updates variables and saved data for new day
@@ -510,7 +479,7 @@ void setup() {
 
   MDNS.begin("ESP8266");
   
-  //Methoden f�r Webseitenaufruf und Parameter�bergabe
+  //contains methods for website requests
   sendRequests();
 
   //Wifimanager Initialization
@@ -614,7 +583,6 @@ void loop() {
   setLed(3);
 
   MDNS.update();
-  
 }
 
 
