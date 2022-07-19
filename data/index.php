@@ -64,7 +64,7 @@
                     <div class="flex-inbox">
                         <div>
                             <p class="subsubtitle"> Die Uhrzeit um welche zuletzt getrunken wurde </p>
-                            <p id="lastDrankDateHour"> Zuletzt getrunken um:  0.0.0 </p>
+                            <p id="lastDrank">  00 : 00 : 00 </p>
                         </div>
                     </div>
                 </section>
@@ -73,7 +73,7 @@
                     <div class="flex-inbox">
                         <div>
                             <p class="subsubtitle"> Die in der letzten Woche getrunkene Menge in Gramm </p>
-                            <p id="DrankDay1"> Letzte Woche getrunken:  0 </p>
+                            <p id="DrankLastWeek"> Letzte Woche getrunken:  0 </p>
                         </div>
                     </div>
                 </section>
@@ -96,8 +96,8 @@
                 getValue("currentWeight");
                 getValue("maxWeight");
                 getValue("lastDrankAmount")
-                getValue("lastDrankDateHour");
-                getValue("DrankDay1")
+                getValue("lastDrank")
+                getValue("DrankLastWeek")
             }
 
             window.onload = update();
