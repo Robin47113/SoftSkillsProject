@@ -31,6 +31,7 @@
         </header>
         <!-- Bereich fuer die Anzeige der Messdaten -->
         <div class="pagebody">
+            <noscript> <h3 class="subtitle"> Ohne Javascript kann diese Seite nicht verwendet werden. Die Daten welche sie sehen sind nicht aussagekräftig. Wenn sie diese Webseite nutzen wollen aktivieren sie Javascript. </h3></noscript>
             <div class="flex-container">
                 <section class="box">
                     <h3 class="subtitle"> Aktuelles Gewicht </h3>
@@ -85,7 +86,7 @@
                 var valueRequestCurrentWeight = new XMLHttpRequest();
                 valueRequestCurrentWeight.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById(varName).innerHTML = 0;
+                        document.getElementById(varName).innerHTML = this.responseText;
                     }
                 };
                 valueRequestCurrentWeight.open("GET", varName, true);
