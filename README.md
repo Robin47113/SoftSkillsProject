@@ -16,6 +16,8 @@ Dieser Sensor trackt den Wasserstand deiner Flasche und benachrichtigt dich, wen
 - Füllmenge der Flasche wird über LED-Streifen visualisiert
 - Regelmäßige Aktualisierung durch Webserver
 - Discord-Benachrichtigung: Habe ich genug / zu wenig getrunken?
+- Angepasste Webseite für unterschiedliche Endgeräte
+- Barrierefreie Webseite
 
 ## Weitere Voraussetzungen zur Nutzung
 - internetfähiges Endgerät
