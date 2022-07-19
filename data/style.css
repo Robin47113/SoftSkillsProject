@@ -162,6 +162,7 @@ h2, h3, .subtitle {
   font-size: 38px;
   margin: 0px;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 h2, .spacing {
