@@ -10,7 +10,6 @@
 #include <NTPClient.h>//ntp (time)
 #include <WiFiUdp.h>//ntp
 #include <ESP8266HTTPClient.h>//discord messaging
-
 #include <ESP8266WiFi.h>
 //Asynchroner Webserver
 #include <ESPAsyncTCP.h>
@@ -23,7 +22,7 @@
 #include <FS.h>
 
 //WiFi-Credentials
-#include "WiFiConnection.h";
+#include "WiFiConnection.h"
 
 char* dns_name = "ESP8266";   //Homepage (DNS): "http://esp8266.local/"
 
@@ -32,7 +31,6 @@ AsyncWebServer server(80);    //Standard-Port
 //placeholder variable for website request
 int tmpValue = 0;
 
-#include "async_request_methods.h";
 
 /*// HX711-1 (1 load cell)
 #define LOADCELL1_DOUT_PIN D2
@@ -58,7 +56,7 @@ bool    spiffsActive = false;
 
 //-------loop timing
 int timeMillis; //timestamp (in millis since chip was turned on) of the last weight measurement.
-#define WEIGHT_TAKING_DELAY 10000//after this time (in milliseconds) the weight is measured again.
+#define WEIGHT_TAKING_DELAY 3000//after this time (in milliseconds) the weight is measured again.
 #define WEIGHT_TAKING_DELAY_FILLING 500//after this time (in milliseconds) the weight is measured again during filling.
 int fillingMode = 0;//0=normal functionality, 1=checking for Time Threshold, 2=waiting for filling to stop
 int discordNotifMillis = 0; //timestamp (in millis since chip was turned on) of the last time the discord notification conditions were checked.
@@ -67,8 +65,8 @@ int discordNotifMillis = 0; //timestamp (in millis since chip was turned on) of 
 #define DISCORD_ACTIVE_MIDDLE 19//at this hour conditions for sending notifications become less strict.
 #define DISCORD_ACTIVE_END 22//at this hour the program stops sending discord notifications.
 //-------weight
-#define BOTTLE_WEIGHT_EMPTY 0
-#define BOTTLE_WEIGHT_MAX 1000
+#define BOTTLE_WEIGHT_EMPTY 450
+#define BOTTLE_WEIGHT_MAX 1150
 #define FILLING_THRESHOLD_WEIGHT 100//weight that has to be added for the bottle to accept it as being filled.
 #define FILLING_THRESHOLD_TIME 100//time that the additional weight has to be measured for to accept it as being filled.
 
@@ -97,12 +95,13 @@ const char* mqtt_pw = "test123";*/
 //WiFiClient espClient;
 //PubSubClient clientmqtt(espClient);
 
+
 //ntp timeclient
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
 //discord webhook
-const char* discord = "https://discord.com/api/webhooks/994272805384364072/VKC_5xUUDNtgnyNbaPNp74NiCHGJCPrqfRUdv49O01gCe2J578KxZkMJc95LLNXHJg6W";
+const char* discord = "https://discord.com/api/webhooks/999006439462944808/yCw1v2TlRdGQydjUNjipzOPnZZlk75nmlQLiFZQrJftcX5NSVW92TPHvG8hNce_yLr-4";
 const boolean discord_tts = false;
 WiFiClientSecure client;
 HTTPClient https;
@@ -141,6 +140,8 @@ void reconnect() {
   }
 }*/
 
+
+
 //returns max weight of water
 int maxWeight(){
   return BOTTLE_WEIGHT_MAX;
@@ -162,6 +163,8 @@ int drankDay(int day){
 int getWeight(){
 return (scale2.get_units(5)-Loadcell2Tare)/Loadcell2cal-BOTTLE_WEIGHT_EMPTY;
 }
+
+
 
 //sets Led
 void setLed(int mode){
@@ -197,19 +200,22 @@ void setLed(int mode){
 }
 //fill percentage
   if(mode==2){
-  float fillp = getWeight()/BOTTLE_WEIGHT_MAX;
-  fillp  = fillp*LED_COUNT;
-  strip.clear();
-  for(int i=0;i<floorf(fillp);i++){
-    strip.setPixelColor(i, strip.Color(0,0,255));
-    if(i+1==floorf(fillp)){
-      strip.setPixelColor(i+1,strip.Color(0,0,255*(fillp-floorf(fillp))));
+  float fillp = (float)getWeight()/(float)BOTTLE_WEIGHT_MAX;
+  fillp  = fillp*(float)LED_COUNT;
+  //Serial.print("fillp: ");
+  //Serial.println(fillp-floorf(fillp));
+  for(int i=0;i<strip.numPixels();i++){
+    if(i>floorf(fillp)){
+    strip.setPixelColor(i, strip.Color(0, 0, 0));
+    }else{
+      strip.setPixelColor(i, strip.Color(0,0,255));
     }
     strip.show();
-
   }
+      //strip.setPixelColor(i+1,strip.Color(0,0,255*(fillp-floorf(fillp))));
   }
 }
+
 // Sets up POST request to discord webhook.
 void discord_send(String content) {
   https.begin(client, discord);
@@ -226,6 +232,37 @@ void discord_send(String content) {
       https.end();
 }
 
+//updates variables and saved data for new day
+void newDay(){
+if (SPIFFS.exists(TESTFILE)) {
+ File f = SPIFFS.open(TESTFILE, "w+");
+      if (!f) {
+        Serial.print("Unable To Open '");
+        Serial.print(TESTFILE);
+        Serial.println("' for Reading");
+        Serial.println();
+      } else {
+  String h = (String)lastSessionTimestamp[0]+(String)lastSessionTimestamp[1]+(String)lastSessionTimestamp[2];
+  f.println(h);
+  f.println(lastSessionWeight);
+  f.println(0);
+  int tempArr[7] = {0,0,0,0,0,0,0};
+  for(int i = 1;i<7;i++){
+    f.println(drankDay(i-1));
+    tempArr[i] = drankDay(i-1);
+  }
+  for(int i = 0;i<7;i++){
+    consumptionWeek[i]=tempArr[i];
+  }
+        f.close();
+    }
+  } else {
+    Serial.print("Unable To Find ");
+    Serial.println(TESTFILE);
+    Serial.println();
+  }
+  
+}
 //saves amount(g) to saved.txt with timestamp and updates variables
 void drank (int amount){
     timeClient.update();
@@ -277,37 +314,6 @@ if (SPIFFS.exists(TESTFILE)) {
   }
 }
 
-//updates variables and saved data for new day
-void newDay(){
-if (SPIFFS.exists(TESTFILE)) {
- File f = SPIFFS.open(TESTFILE, "w+");
-      if (!f) {
-        Serial.print("Unable To Open '");
-        Serial.print(TESTFILE);
-        Serial.println("' for Reading");
-        Serial.println();
-      } else {
-  String h = (String)lastSessionTimestamp[0]+(String)lastSessionTimestamp[1]+(String)lastSessionTimestamp[2];
-  f.println(h);
-  f.println(lastSessionWeight);
-  f.println(0);
-  int tempArr[7] = {0,0,0,0,0,0,0};
-  for(int i = 1;i<7;i++){
-    f.println(drankDay(i-1));
-    tempArr[i] = drankDay(i-1);
-  }
-  for(int i = 0;i<7;i++){
-    consumptionWeek[i]=tempArr[i];
-  }
-        f.close();
-    }
-  } else {
-    Serial.print("Unable To Find ");
-    Serial.println(TESTFILE);
-    Serial.println();
-  }
-  
-}
 
 //prints data from saved.txt
 void printData(){
@@ -461,6 +467,95 @@ void checkWeight(){
   }
 }
 
+void sendRequests() {
+  //Startseite
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/index.php", String(tmpValue));
+  });
+  
+  //Info-Seite
+  server.on("/infopage.php", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/infopage.php", String(tmpValue));
+  });
+
+  //Impressum
+  server.on("/imprint.php", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/imprint.php", String(tmpValue));
+  });
+
+  //Nutzungsbedingungen
+  server.on("/policy.php", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/policy.php", String(tmpValue));
+  });
+
+  //Datenschutz
+  server.on("/privacy.php", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/privacy.php", String(tmpValue));
+  });
+
+  //CSS-Dateien
+  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/style.css", "text/css");
+  });
+
+  server.on("/button.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/button.css", "text/css");
+  });
+
+  //Daten-Anzeige auf der Startseite
+  server.on("/currentWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(getWeight()));
+  });
+  
+  server.on("/maxWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(maxWeight()));
+  });
+
+  server.on("/lastDrankAmount", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(lastDrankAmount()));
+  });
+
+  server.on("/lastDrankDateHour", HTTP_GET, [](AsyncWebServerRequest * request) {
+   request->send(200, "text/plain", String(lastSessionTimestamp[0]));
+  });
+
+  server.on("/lastDrankDateMinute", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(lastSessionTimestamp[1]));
+  });
+
+  server.on("/lastDrankDateSecond", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(lastSessionTimestamp[2]));
+  });
+
+  server.on("/DrankDay1", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(consumptionWeek[0]));
+  });
+
+  server.on("/DrankDay2", HTTP_GET, [](AsyncWebServerRequest * request) {
+   request->send(200, "text/plain", String(consumptionWeek[1]));
+  });
+
+  server.on("/DrankDay3", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(consumptionWeek[2]));
+  });
+
+  server.on("/DrankDay4", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(consumptionWeek[3]));
+  });
+
+  server.on("/DrankDay5", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(consumptionWeek[4]));
+  });
+
+  server.on("/DrankDay6", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(consumptionWeek[5]));
+  });
+
+  server.on("/DrankDay7", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(consumptionWeek[6]));
+  });
+}
+
 
 void setup() {
   Serial.begin(115200);
@@ -477,11 +572,15 @@ void setup() {
   
   WiFi.begin(ssid, password);
 
+  if(WiFi.isConnected()){
+    Serial.println("Wifi Conneced");
+  }
   MDNS.begin("ESP8266");
   
   //contains methods for website requests
   sendRequests();
 
+ 
   //Wifimanager Initialization
   //WiFiManager wifiManager;
   //wifiManager.autoConnect("AutoConnectAP");
@@ -509,14 +608,14 @@ void setup() {
   } else {
       Serial.println("Unable to activate SPIFFS");
   }
-
-  //discord message
-  client.setInsecure();
   //current day for newDay
   timeClient.update();
   currentDay = timeClient.getEpochTime()/86400;
 
+  //discord message
+  client.setInsecure();
   //Load cell calibration
+  Serial.print("Raw Result: ");
   Serial.println(scale2.read_average(5));
   /*
   if (scale2.is_ready()) {
@@ -546,9 +645,11 @@ void setup() {
   loadData();
   printData();
 
+
   timeMillis = millis();
 
   server.begin();
+
 }
 
 void loop() {
@@ -560,19 +661,20 @@ void loop() {
   //mqtt loop
   client.loop();*/
 
-  //Serial.print("Result: ");
-  //Serial.println(getWeight());
-  //delay(1000);
-  
-  if (discordNotifMillis + DISCORD_NOTIF_CHECKING_DELAY < millis()) {
+ // Serial.print("Result: ");
+ //Serial.println(getWeight());
+
+
+  if ((discordNotifMillis + DISCORD_NOTIF_CHECKING_DELAY) < (int)millis()) {
     discordNotifMillis = millis();
     timeClient.update();
     int h = timeClient.getHours();
     if (h > DISCORD_ACTIVE_BEGIN && h < DISCORD_ACTIVE_END) {
-      if ((h < DISCORD_ACTIVE_MIDDLE && 2000/(double)consumptionWeek(7) < (24/((double) h)))
-      || (h > DISCORD_ACTIVE_MIDDLE && consumptionWeek(7) < 2000)) {//2000 means 2 liters every day.
-        discord_send("Hey! Du hast deinen täglichen Wasserbedarf noch nicht erfüllt. Es fehlen heute noch "
-        + (2000 - consumptionWeek(7)) + " Milliliter!");
+      if ((h < DISCORD_ACTIVE_MIDDLE && 2000/(double)consumptionWeek[0] < (24/((double) h))) || (h > DISCORD_ACTIVE_MIDDLE && consumptionWeek[0] < 2000)) {//2000 means 2 liters every day.
+        String s  = "Hey! Du hast deinen täglichen Wasserbedarf noch nicht erfüllt. Es fehlen heute noch ";
+        s += (String)(2000 - consumptionWeek[0]);
+        s += " Milliliter!";
+        discord_send(s);
       }
     }
   }
@@ -580,7 +682,7 @@ void loop() {
 
   checkWeight();
 
-  setLed(3);
+  setLed(2);
 
   MDNS.update();
 }

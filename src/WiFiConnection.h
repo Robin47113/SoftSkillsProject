@@ -1,3 +1,3 @@
 //WiFi-Credentials
-const char* ssid = "Network";
-const char* password = "Password";
+const char* ssid = "FRITZ!Box 7590 UM";
+const char* password = "";
