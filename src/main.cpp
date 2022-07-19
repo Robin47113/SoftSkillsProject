@@ -41,7 +41,7 @@ HX711 scale1;*/
 // HX711-2 2 load cells 590g
 #define LOADCELL2_DOUT_PIN D4
 #define LOADCELL2_SCK_PIN  D3
-int Loadcell2Tare=-266617;
+int Loadcell2Tare=-282175;
 float Loadcell2cal=-22.76949f;
 HX711 scale2;
 //leds
@@ -141,6 +141,29 @@ void reconnect() {
 }*/
 
 
+String lastDrankDateString(){
+  String s;
+  if(lastSessionTimestamp[0]<10){
+    s+="0";
+    s+=(String)lastSessionTimestamp[0];
+  }else{
+    s+=(String)lastSessionTimestamp[0];
+  }
+  s+=" : ";
+  if(lastSessionTimestamp[1]<10){
+    s+="0";
+    s+=(String)lastSessionTimestamp[1];
+  }else{
+    s+=(String)lastSessionTimestamp[1];
+  }
+  s+=" : ";
+  if(lastSessionTimestamp[2]<10){
+    s+="0";
+    s+=(String)lastSessionTimestamp[2];
+  }else{
+    s+=(String)lastSessionTimestamp[2];
+  }
+}
 
 //returns max weight of water
 int maxWeight(){
@@ -679,7 +702,6 @@ void loop() {
     }
   }
   
-
   checkWeight();
 
   setLed(2);
