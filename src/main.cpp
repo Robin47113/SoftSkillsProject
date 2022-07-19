@@ -141,6 +141,14 @@ void reconnect() {
 }*/
 
 
+int lastDrankWeek(){
+  int i;
+  for(int j = 0;j<7;j++){
+    i+=consumptionWeek[j];
+  }
+  return i;
+}
+
 String lastDrankDateString(){
   String s;
   if(lastSessionTimestamp[0]<10){
@@ -150,6 +158,7 @@ String lastDrankDateString(){
     s+=(String)lastSessionTimestamp[0];
   }
   s+=" : ";
+
   if(lastSessionTimestamp[1]<10){
     s+="0";
     s+=(String)lastSessionTimestamp[1];
@@ -157,12 +166,14 @@ String lastDrankDateString(){
     s+=(String)lastSessionTimestamp[1];
   }
   s+=" : ";
+
   if(lastSessionTimestamp[2]<10){
     s+="0";
     s+=(String)lastSessionTimestamp[2];
   }else{
     s+=(String)lastSessionTimestamp[2];
   }
+  return s;
 }
 
 //returns max weight of water
@@ -525,6 +536,10 @@ void sendRequests() {
     request->send(SPIFFS, "/button.css", "text/css");
   });
 
+  server.on("/index.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/index.css", "text/css");
+  });
+
   //Daten-Anzeige auf der Startseite
   server.on("/currentWeight", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(200, "text/plain", String(getWeight()));
@@ -538,46 +553,16 @@ void sendRequests() {
     request->send(200, "text/plain", String(lastDrankAmount()));
   });
 
-  server.on("/lastDrankDateHour", HTTP_GET, [](AsyncWebServerRequest * request) {
-   request->send(200, "text/plain", String(lastSessionTimestamp[0]));
+  server.on("/lastDrankDate", HTTP_GET, [](AsyncWebServerRequest * request) {
+   request->send(200, "text/plain", lastDrankDateString());
   });
 
-  server.on("/lastDrankDateMinute", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(lastSessionTimestamp[1]));
+  server.on("/DrankLastWeek", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(200, "text/plain", String(lastDrankWeek()));
   });
 
-  server.on("/lastDrankDateSecond", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(lastSessionTimestamp[2]));
-  });
-
-  server.on("/DrankDay1", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(consumptionWeek[0]));
-  });
-
-  server.on("/DrankDay2", HTTP_GET, [](AsyncWebServerRequest * request) {
-   request->send(200, "text/plain", String(consumptionWeek[1]));
-  });
-
-  server.on("/DrankDay3", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(consumptionWeek[2]));
-  });
-
-  server.on("/DrankDay4", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(consumptionWeek[3]));
-  });
-
-  server.on("/DrankDay5", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(consumptionWeek[4]));
-  });
-
-  server.on("/DrankDay6", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(consumptionWeek[5]));
-  });
-
-  server.on("/DrankDay7", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", String(consumptionWeek[6]));
-  });
 }
+
 
 
 void setup() {

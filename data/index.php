@@ -65,7 +65,7 @@
                     <div class="flex-inbox">
                         <div>
                             <p class="subsubtitle"> Die Uhrzeit um welche zuletzt getrunken wurde </p>
-                            <p id="lastDrank">  00 : 00 : 00 </p>
+                            <p id="lastDrankDate">  00 : 00 : 00 </p>
                         </div>
                     </div>
                 </section>
@@ -97,14 +97,14 @@
                 getValue("currentWeight");
                 getValue("maxWeight");
                 getValue("lastDrankAmount")
-                getValue("lastDrank")
+                getValue("lastDrankDate")
                 getValue("DrankLastWeek")
             }
 
             window.onload = update();
             setInterval(function () {
                 update();
-            }, 86400000);
+            }, 500);
         </script>
 
  
