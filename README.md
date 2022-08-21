@@ -37,6 +37,6 @@ Dieser Sensor trackt den Wasserstand deiner Flasche und benachrichtigt dich, wen
 - Manuelle Änderung der Verbindungsdaten bei Netzwerkwechsel notwendig
 
 ## Dokumentation
-Die Dokumentation zu unserem Projekt findet ihr auf folgender Seite: 
+Die Dokumentation zu unserem Projekt kann auf folgender Seite gefunden werden: 
 - https://wp.uni-oldenburg.de/soft-skills-und-technische-kompetenz-wise20212022-projektgruppe-24/
 
