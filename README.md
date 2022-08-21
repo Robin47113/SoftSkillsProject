@@ -1,5 +1,5 @@
 # SoftSkillsProject: Gruppe 24: Hydration Tracker
-Dieser Sensor trackt den Wasserstand deiner Flasche und benachrichtigt dich, wenn du zu wenig Wasser getrunken hast.
+Dieser Flaschenuntersatz trackt den Wasserstand deiner Flasche und benachrichtigt dich, wenn du zu wenig Wasser getrunken hast.
 
 ![download](https://user-images.githubusercontent.com/107244022/179734226-7afa8535-7d08-4d5d-b7c7-89bda8b9afde.png)
 
@@ -12,22 +12,22 @@ Dieser Sensor trackt den Wasserstand deiner Flasche und benachrichtigt dich, wen
 
 ## Features
 - Wasserstand einer Flasche wird in regelmäßigen Zeitabständen gemessen
-- Website gibt Informationen über Wasserhaushalt und Flascheninhalt 
+- Webseite zeigt Informationen über Wasserhaushalt und Flascheninhalt an 
 - Füllmenge der Flasche wird über LED-Streifen visualisiert
-- Regelmäßige Aktualisierung durch Webserver
+- Regelmäßige Aktualisierung der Daten durch Webserver
 - Discord-Benachrichtigung: Habe ich genug / zu wenig getrunken?
 - Angepasste Webseite für unterschiedliche Endgeräte
 - Barrierefreie Webseite
 
 ## Weitere Voraussetzungen zur Nutzung
-- internetfähiges Endgerät
+- Internetfähiges Endgerät
 
 ## Hardware
-- ESP-8266 (Wemos D1 mini board)
-- Load-Cell with ADC (HX711)
+- ESP8266 (Wemos D1 Mini Board)
+- Load Cell with ADC (HX711)
 - Boost-Converter
 - BMS with charger
-- 18650 Lion
+- 18650 Li-Ion Akku
 - RGB-LEDs
 
 ## Bekannte Fehler und Mängel
