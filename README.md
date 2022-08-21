@@ -40,10 +40,3 @@ Dieser Sensor trackt den Wasserstand deiner Flasche und benachrichtigt dich, wen
 Die Dokumentation zu unserem Projekt findet ihr auf folgender Seite: 
 - https://wp.uni-oldenburg.de/soft-skills-und-technische-kompetenz-wise20212022-projektgruppe-24/
 
-## Beispielbilder 
-- Website:
-
- ![download](https://user-images.githubusercontent.com/107244022/179706044-4b16d3e0-b1f5-40b4-be9b-cb097c7cc4c6.png)
-
-- Discord Benachrichtigung:
-Coming Soon
